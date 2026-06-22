@@ -1,20 +1,40 @@
-'use client'; // Indica a Next.js que este componente usa animaciones en el navegador
+'use client'; // Componente de cliente para animaciones en el navegador
 
 import React, { useEffect, useRef } from 'react';
 
-// --- CONFIGURACIÓN DE TU PALETA DE COLORES REAL ---
+// --- CONFIGURACIÓN DEL SISTEMA DE DISEÑO ---
 const COLORES = {
-  fondo: '#FAFAF7',          // Tu color claro de fondo (--bg)
-  textoInk: '#14171C',       // Tu color oscuro para texto principal (--ink)
-  pib: 'rgba(20, 23, 28, 0.05)', // Gris/negro extremadamente tenue para la línea macro
-  signal: 'rgba(45, 93, 107, 0.18)', // Tu azul-petróleo (#2D5D6B) con baja opacidad
-  velaAlcista: 'rgba(45, 93, 107, 0.25)', // Velas que suben (usamos tu color de datos)
-  velaBajista: 'rgba(200, 133, 42, 0.25)', // Velas que bajan (tu color de alerta puntual #C8852A)
-  lineaEje: '#E3E1DC',       // Tu color de líneas divisorias (--line)
-  textoMuted: '#6B7280',     // Tu color gris para datos secundarios (--muted)
+  fondo: '#FAFAF7',          // Fondo claro (--bg)
+  textoInk: '#14171C',       // Texto principal (--ink)
+  pib: 'rgba(20, 23, 28, 0.20)', // Línea superior con más dinamismo
+  signal: 'rgba(45, 93, 107, 0.68)', // Tu color de datos (--signal) a mayor velocidad
+  velaAlcista: 'rgba(45, 93, 107, 0.65)', // Velas que suben
+  velaBajista: 'rgba(200, 133, 42, 0.65)', // Velas que bajan (--alert)
+  lineaEje: '#E3E1DC',       // Líneas divisorias (--line)
+  textoMuted: 'rgba(107, 114, 128, 0.25)', // Gris para las fórmulas matemáticas sutiles
 };
 
-// Definición de la estructura que tendrá cada vela japonesa (datos puramente matemáticos)
+// Repertorio de expresiones matemáticas reales del Lab (Inferencia, Álgebra y ML)
+// Repertorio ampliado con notación científica hiper-realista inspirada en libros y LaTeX
+const FORMULAS_QUANT = [
+  'dM_t = θ(μ - M_t)dt + σdW_t',               // Proceso de Ornstein-Uhlenbeck
+  'E[R_i] = R_f + β_i(E[R_m] - R_f)',          // Modelo CAPM
+  'L_G = ∑ ln f(y_t | F_t-1; θ)',             // Máxima verosimilitud temporal
+  'w^* = Σ^-1 μ / (ι^T Σ^-1 μ)',               // Portfolio óptimo de Markowitz
+  '∂V/∂t + rS ∂V/∂S + 1/2 σ² S² ∂²V/∂S² = rV', // Ecuación de Black-Scholes
+  'K_k = P_k^- H^T (H P_k^- H^T + R)^-1',      // Ganancia del Filtro de Kalman
+  'f(x_t) = α_0 + ∑ α_i x_t-i + ∑ γ_j ε_t-j',  // Modelo ARMA generalizado
+  '∇_w L(w) = 1/n ∑ ∇_w l_i(w) + λ||w||²',     // Regularización Ridge / Lasso
+  'P(Y_t = 1 | X) = 1 / (1 + e^-Xβ)',          // Regresión Logística Cuántica
+  'J(w) = 1/2m ∑ (h_w(x^(i)) - y^(i))²',       // Función de coste MCO
+  'Q(s,a) = R(s,a) + γ max Q(s\',a\')',        // Ecuación de Bellman (Q-Learning)
+  'I_n = X^T (X X^T)^-1 X',                    // Matriz de proyección de sombrero
+  'H_t = Ω + α ε²_t-1 + β H_t-1',              // Modelo GARCH(1,1) de volatilidad
+  'f(x) = sign( ∑ α_i y_i K(x_i, x) + b )',    // Máquina de Vectores de Soporte (SVM)
+  'AIC = 2k - 2ln(L^*)',                       // Criterio de Información de Akaike
+  'dx_t = f(x_t, t)dt + g(x_t, t)dW_t'         // Ecuación Diferencial Estocástica
+];
+
 interface Vela {
   apertura: number;
   maximo: number;
@@ -23,12 +43,17 @@ interface Vela {
   posicionX: number;
 }
 
+interface ItemFormula {
+  texto: string;
+  x: number;
+  y: number;
+  velocidad: number;
+}
+
 export default function HeroQuantitativeLab() {
-  // El "ref" es como una variable que nos permite enganchar y controlar el elemento <canvas> de HTML
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    // Esto se ejecuta solo cuando la web se carga en el navegador
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -36,11 +61,9 @@ export default function HeroQuantitativeLab() {
     if (!ctx) return;
 
     let idAnimacion: number;
-    // Ajustamos el tamaño del lienzo al tamaño real de la pantalla
     let ancho = (canvas.width = canvas.offsetWidth);
     let alto = (canvas.height = canvas.offsetHeight);
 
-    // Si el usuario cambia el tamaño de la ventana, recalculamos el tamaño del lienzo
     const ajustarPantalla = () => {
       if (!canvas) return;
       ancho = canvas.width = canvas.offsetWidth;
@@ -48,63 +71,71 @@ export default function HeroQuantitativeLab() {
     };
     window.addEventListener('resize', ajustarPantalla);
 
-    // --- VARIABLES DE CONTROL PARA LAS 3 SERIES ---
-    let tiempo = 0; // Contador de fotogramas para hacer avanzar la simulación
+    // --- VARIABLES DE CONTROL Y ESTADO ---
+    // TRUCO SEGURO: Inicializamos el tiempo en 400 en vez de 0.
+    // Así, al cargar la página por primera vez, el dibujo ya va por la mitad del lienzo.
+    let tiempo = 400; 
     
-    // 1. Historial de la Serie PIB
+    // 1. Serie Superior (Ciclo con mayor dinamismo)
     const puntosPIB: { x: number; y: number }[] = [];
     
-    // 2. Historial de la Serie Activo Volátil (Movimiento Browniano)
+    // 2. Serie Media (Activo Volátil / Random Walk rápido)
     const puntosActivo: { x: number; y: number }[] = [];
-    let valorActualActivo = alto * 0.5; // Empezamos en la mitad vertical de su zona
+    let valorActualActivo = alto * 0.45;
 
-    // 3. Historial de Velas Japonesas
+    // 3. Serie Inferior (Velas Japonesas - Frecuencia controlada)
     const listaVelas: Vela[] = [];
-    const anchoVela = 6; // Ancho en píxeles del cuerpo de la vela
-    const espacioVela = 4; // Separación entre velas
+    const anchoVela = 6;
+    const espacioVela = 4;
     const espacioTotalVela = anchoVela + espacioVela;
-    let proximaVelaX = 0; // Dónde se dibujará la siguiente vela
-    let ultimoCierre = alto * 0.75; // Punto de partida vertical de los precios
+    let proximaVelaX = 0;
+    let ultimoCierre = alto * 0.78;
 
-    // --- BUCLE DE RENDERIZADO (Se ejecuta a 60 fotogramas por segundo) ---
+    // 4. Capa Matemática (Fórmulas flotantes intermedias)
+    const listaFormulas: ItemFormula[] = [];
+
+    // --- BUCLE DE RENDERIZADO ---
     const renderizar = () => {
       tiempo += 1;
 
-      // Pintamos el fondo limpio en cada fotograma
+      // Limpieza del lienzo
       ctx.fillStyle = COLORES.fondo;
       ctx.fillRect(0, 0, ancho, alto);
 
-      // Progreso horizontal del dibujo (avanza lento de izquierda a derecha)
-      const progresoX = (tiempo * 0.6) % ancho; 
+      // Las líneas se dibujan de izquierda a derecha avanzando según el tiempo
+      const progresoXLineas = (tiempo * 1.4) % ancho;
+      const progresoXVelas = (tiempo * 0.9) % ancho;
 
-      // Si la línea llega al final de la pantalla, reiniciamos el dibujo desde cero
-      if (progresoX === 0 || tiempo === 1) {
+      // Reset coordinado cuando da la vuelta el ciclo (aquí sí vuelve a 0 de forma natural)
+      if (progresoXLineas < 1.5) {
         puntosPIB.length = 0;
         puntosActivo.length = 0;
         listaVelas.length = 0;
+        listaFormulas.length = 0;
         valorActualActivo = alto * 0.45;
-        ultimoCierre = alto * 0.75;
+        ultimoCierre = alto * 0.78;
         proximaVelaX = 0;
       }
 
-      // Función para desvanecer elementos cerca de los bordes del gráfico
+      // Gestor de opacidad para bordes limpios
       const calcularOpacidadFade = (x: number) => {
-        if (x < 60) return x / 60; // Aparece suave al inicio
-        if (x > ancho - 60) return (ancho - x) / 60; // Desaparece suave al final
+        if (x < 60) return x / 60;
+        if (x > ancho - 60) return (ancho - x) / 60;
         return 1;
       };
 
       // ========================================================
-      // 1. CÁLCULO Y DIBUJO: SERIE TIPO PIB (Zona Superior)
+      // 1. DIBUJO: SERIE SUPERIOR MACRO (Ciclos Dinámicos)
       // ========================================================
-      const lineaBasePIB = alto * 0.25;
-      const tendenciaPIB = (progresoX / ancho) * -40; // Simula crecimiento (sube en el canvas)
-      const estacionalidadPIB = Math.sin(progresoX * 0.02) * 10; // Ciclos económicos sinusoides
-      const ruidoPIB = Math.sin(progresoX * 0.2) * 1.2; // Pequeñas fluctuaciones diarias
-      const pibYActual = lineaBasePIB + tendenciaPIB + estacionalidadPIB + ruidoPIB;
+      const lineaBasePIB = alto * 0.28;
+      const tendenciaPIB = (progresoXLineas / ancho) * -30; 
+      const cicloLargo = Math.sin(progresoXLineas * 0.015) * 20; 
+      const cicloCorto = Math.cos(progresoXLineas * 0.05) * 6;   
+      const ruidoPIB = Math.sin(progresoXLineas * 0.3) * 1.5;    
+      const pibYActual = lineaBasePIB + tendenciaPIB + cicloLargo + cicloCorto + ruidoPIB;
 
-      if (puntosPIB.length === 0 || puntosPIB[puntosPIB.length - 1].x < progresoX) {
-        puntosPIB.push({ x: progresoX, y: pibYActual });
+      if (puntosPIB.length === 0 || puntosPIB[puntosPIB.length - 1].x < progresoXLineas) {
+        puntosPIB.push({ x: progresoXLineas, y: pibYActual });
       }
 
       ctx.beginPath();
@@ -117,17 +148,16 @@ export default function HeroQuantitativeLab() {
       ctx.stroke();
 
       // ========================================================
-      // 2. CÁLCULO Y DIBUJO: PRECIO DE ACTIVO (Zona Media)
+      // 2. DIBUJO: PRECIO DE ACTIVO (Zona Media - Rápida)
       // ========================================================
-      if (tiempo % 2 === 0) { // Ralentizamos el cálculo para que sea un avance pausado
-        const cambioAleatorio = (Math.random() - 0.49) * 3.5; // Simulación Random Walk
-        // Evitamos que la línea se salga de los márgenes de su zona asignada
-        valorActualActivo = Math.max(alto * 0.35, Math.min(alto * 0.60, valorActualActivo + cambioAleatorio));
-        puntosActivo.push({ x: progresoX, y: valorActualActivo });
+      if (tiempo % 1 === 0) { 
+        const cambioAleatorio = (Math.random() - 0.495) * 4.5; 
+        valorActualActivo = Math.max(alto * 0.38, Math.min(alto * 0.62, valorActualActivo + cambioAleatorio));
+        puntosActivo.push({ x: progresoXLineas, y: valorActualActivo });
       }
 
       ctx.beginPath();
-      ctx.lineWidth = 1.25;
+      ctx.lineWidth = 1.75;
       ctx.strokeStyle = COLORES.signal;
       for (let i = 0; i < puntosActivo.length; i++) {
         if (i === 0) ctx.moveTo(puntosActivo[i].x, puntosActivo[i].y);
@@ -136,11 +166,33 @@ export default function HeroQuantitativeLab() {
       ctx.stroke();
 
       // ========================================================
-      // 3. CÁLCULO Y DIBUJO: VELAS JAPONESAS REALISTAS (Zona Inferior)
+      // 3. CAPA INTERMEDIA: FÓRMULAS MATEMÁTICAS FLOTANTES
       // ========================================================
-      if (progresoX >= proximaVelaX) {
-        const esAlcista = Math.random() > 0.48; // Dirección matemática de la vela
-        const tamañoCuerpo = Math.random() * 12 + 2; // Altura del cuerpo real
+      if (tiempo % 70 === 0 && listaFormulas.length < 5) {
+        const textoAleatorio = FORMULAS_QUANT[Math.floor(Math.random() * FORMULAS_QUANT.length)];
+        listaFormulas.push({
+          texto: textoAleatorio,
+          x: progresoXLineas,
+          y: alto * 0.32 + Math.random() * (alto * 0.08),
+          velocidad: 0.2 + Math.random() * 0.3 
+        });
+      }
+
+      ctx.font = '10px IBM Plex Mono, monospace';
+      listaFormulas.forEach((formula) => {
+        formula.x += formula.velocidad; 
+        const opacidadBorde = calcularOpacidadFade(formula.x);
+        
+        ctx.fillStyle = `rgba(107, 114, 128, ${0.28 * opacidadBorde})`;
+        ctx.fillText(formula.texto, formula.x, formula.y);
+      });
+
+      // ========================================================
+      // 4. DIBUJO: VELAS JAPONESAS (Zona Inferior)
+      // ========================================================
+      if (progresoXVelas >= proximaVelaX) {
+        const esAlcista = Math.random() > 0.47; 
+        const tamañoCuerpo = Math.random() * 14 + 2; 
         
         const apertura = ultimoCierre;
         const cierre = esAlcista ? apertura - tamañoCuerpo : apertura + tamañoCuerpo;
@@ -148,20 +200,17 @@ export default function HeroQuantitativeLab() {
         const cuerpoMasAlto = Math.min(apertura, cierre);
         const cuerpoMasBajo = Math.max(apertura, cierre);
         
-        // Las mechas de máximo y mínimo nacen proporcionalmente de los extremos del cuerpo
-        const maximo = cuerpoMasAlto - (Math.random() * 6);
-        const minimo = cuerpoMasBajo + (Math.random() * 6);
+        const maximo = cuerpoMasAlto - (Math.random() * 7);
+        const minimo = cuerpoMasBajo + (Math.random() * 7);
 
-        // Control de contención vertical de la serie de velas
-        if (cierre > alto * 0.85) ultimoCierre = alto * 0.80;
-        else if (cierre < alto * 0.62) ultimoCierre = alto * 0.68;
+        if (cierre > alto * 0.88) ultimoCierre = alto * 0.82;
+        else if (cierre < alto * 0.65) ultimoCierre = alto * 0.72;
         else ultimoCierre = cierre;
 
         listaVelas.push({ apertura, maximo, minimo, cierre, posicionX: proximaVelaX });
         proximaVelaX += espacioTotalVela;
       }
 
-      // Dibujamos cada una de las velas calculadas en la pantalla
       listaVelas.forEach((vela) => {
         const opacidad = calcularOpacidadFade(vela.posicionX);
         if (opacidad <= 0) return;
@@ -169,30 +218,28 @@ export default function HeroQuantitativeLab() {
         const esVelaVerde = vela.cierre < vela.apertura; 
         const centroX = Math.floor(vela.posicionX + anchoVela / 2);
 
-        // A. Dibujar la mecha vertical (línea fina central de Máximo a Mínimo)
+        // Mecha
         ctx.beginPath();
-        ctx.strokeStyle = 'rgba(20, 23, 28, 0.15)';
+        ctx.strokeStyle = 'rgba(20, 23, 28, 0.12)';
         ctx.lineWidth = 1;
         ctx.moveTo(centroX, Math.floor(vela.maximo));
         ctx.lineTo(centroX, Math.floor(vela.minimo));
         ctx.stroke();
 
-        // B. Dibujar el cuerpo rectangular (Apertura a Cierre)
+        // Cuerpo
         ctx.fillStyle = esVelaVerde ? COLORES.velaAlcista : COLORES.velaBajista;
         const cuerpoY = Math.floor(Math.min(vela.apertura, vela.cierre));
         const cuerpoH = Math.max(1, Math.floor(Math.abs(vela.apertura - vela.cierre)));
-        
         ctx.fillRect(vela.posicionX, cuerpoY, anchoVela, cuerpoH);
       });
 
       // ========================================================
-      // MÁSCARA DE DEGRADADO (Protección estricta de legibilidad)
+      // MÁSCARA DE DEGRADADO (Protección de textos)
       // ========================================================
-      // Hace opaca la zona de texto (izquierda) y se vuelve transparente hacia la derecha
       const degradado = ctx.createLinearGradient(0, 0, ancho, 0);
       degradado.addColorStop(0, COLORES.fondo);
-      degradado.addColorStop(0.38, COLORES.fondo); // 38% del ancho completamente limpio de ruido
-      degradado.addColorStop(0.58, 'rgba(250, 250, 247, 0.5)');
+      degradado.addColorStop(0.38, COLORES.fondo); 
+      degradado.addColorStop(0.47, 'rgba(250, 250, 247, 0.35)');
       degradado.addColorStop(1, 'rgba(250, 250, 247, 0)');
       
       ctx.fillStyle = degradado;
@@ -203,7 +250,6 @@ export default function HeroQuantitativeLab() {
 
     renderizar();
 
-    // Limpieza de memoria al desmontar el componente
     return () => {
       cancelAnimationFrame(idAnimacion);
       window.removeEventListener('resize', ajustarPantalla);
@@ -211,13 +257,10 @@ export default function HeroQuantitativeLab() {
   }, []);
 
   return (
-    <div className="relative w-full h-[450px] bg-[#FAFAF7] overflow-hidden border-b border-[#E3E1DC]">
-      {/* El lienzo de dibujo técnico */}
+    <div className="relative w-full h-[480px] bg-[#FAFAF7] overflow-hidden border-b border-[#E3E1DC]">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
-      {/* Capa de interfaz de usuario (UI) */}
       <div className="relative z-10 max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center">
-        {/* Franja del 40% izquierdo con textos totalmente legibles */}
         <div className="w-full md:w-[40%] text-left space-y-4 pointer-events-none select-none">
           <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded bg-[#2D5D6B]/10 border border-[#2D5D6B]/20 text-[10px] font-mono tracking-wider text-[#2D5D6B]">
             <span className="w-1 h-1 rounded-full bg-[#2D5D6B] animate-pulse" />
@@ -231,8 +274,6 @@ export default function HeroQuantitativeLab() {
             Análisis cuantitativo de series temporales y optimización matemática aplicado a estrategias de trading algorítmico sistemático.
           </p>
         </div>
-
-        {/* Zona del 60% derecho libre para la simulación visual */}
         <div className="hidden md:block md:w-[60%] h-full" />
       </div>
     </div>
