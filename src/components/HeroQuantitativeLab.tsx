@@ -1,38 +1,29 @@
-'use client'; // Componente de cliente para animaciones en el navegador
+'use client';
 
 import React, { useEffect, useRef } from 'react';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 // --- CONFIGURACIÓN DEL SISTEMA DE DISEÑO ---
 const COLORES = {
-  fondo: '#FAFAF7',          // Fondo claro (--bg)
-  textoInk: '#14171C',       // Texto principal (--ink)
-  pib: 'rgba(20, 23, 28, 0.20)', // Línea superior con más dinamismo
-  signal: 'rgba(45, 93, 107, 0.68)', // Tu color de datos (--signal) a mayor velocidad
-  velaAlcista: 'rgba(45, 93, 107, 0.65)', // Velas que suben
-  velaBajista: 'rgba(200, 133, 42, 0.65)', // Velas que bajan (--alert)
-  lineaEje: '#E3E1DC',       // Líneas divisorias (--line)
-  textoMuted: 'rgba(107, 114, 128, 0.25)', // Gris para las fórmulas matemáticas sutiles
+  fondo: '#FAFAF7',          
+  textoInk: '#14171C',       
+  pib: 'rgba(20, 23, 28, 0.20)', 
+  signal: 'rgba(45, 93, 107, 0.65)', 
+  velaAlcista: 'rgba(45, 110, 125, 0.90)', 
+  velaBajista: 'rgba(215, 126, 34, 0.90)', 
 };
 
-// Repertorio de expresiones matemáticas reales del Lab (Inferencia, Álgebra y ML)
-// Repertorio ampliado con notación científica hiper-realista inspirada en libros y LaTeX
-const FORMULAS_QUANT = [
-  'dM_t = θ(μ - M_t)dt + σdW_t',               // Proceso de Ornstein-Uhlenbeck
-  'E[R_i] = R_f + β_i(E[R_m] - R_f)',          // Modelo CAPM
-  'L_G = ∑ ln f(y_t | F_t-1; θ)',             // Máxima verosimilitud temporal
-  'w^* = Σ^-1 μ / (ι^T Σ^-1 μ)',               // Portfolio óptimo de Markowitz
-  '∂V/∂t + rS ∂V/∂S + 1/2 σ² S² ∂²V/∂S² = rV', // Ecuación de Black-Scholes
-  'K_k = P_k^- H^T (H P_k^- H^T + R)^-1',      // Ganancia del Filtro de Kalman
-  'f(x_t) = α_0 + ∑ α_i x_t-i + ∑ γ_j ε_t-j',  // Modelo ARMA generalizado
-  '∇_w L(w) = 1/n ∑ ∇_w l_i(w) + λ||w||²',     // Regularización Ridge / Lasso
-  'P(Y_t = 1 | X) = 1 / (1 + e^-Xβ)',          // Regresión Logística Cuántica
-  'J(w) = 1/2m ∑ (h_w(x^(i)) - y^(i))²',       // Función de coste MCO
-  'Q(s,a) = R(s,a) + γ max Q(s\',a\')',        // Ecuación de Bellman (Q-Learning)
-  'I_n = X^T (X X^T)^-1 X',                    // Matriz de proyección de sombrero
-  'H_t = Ω + α ε²_t-1 + β H_t-1',              // Modelo GARCH(1,1) de volatilidad
-  'f(x) = sign( ∑ α_i y_i K(x_i, x) + b )',    // Máquina de Vectores de Soporte (SVM)
-  'AIC = 2k - 2ln(L^*)',                       // Criterio de Información de Akaike
-  'dx_t = f(x_t, t)dt + g(x_t, t)dW_t'         // Ecuación Diferencial Estocástica
+const FORMULAS_LATEX = [
+  'dM_t = \\theta(\\mu - M_t)dt + \\sigma dW_t',
+  'E[R_i] = R_f + \\beta_i(E[R_m] - R_f)',
+  'w^* = \\Sigma^{-1}\\mu / (\\iota^T \\Sigma^{-1}\\mu)',
+  '\\frac{\\partial V}{\\partial t} + rS \\frac{\\partial V}{\\partial S} = rV',
+  '\\nabla_w L(w) = \\frac{1}{n} \\sum \\nabla_w l_i(w) + \\lambda ||w||^2',
+  'H_t = \\Omega + \\alpha \\varepsilon^2_{t-1} + \\beta H_{t-1}',
+  'X_t = X_0 + \\int_0^t f(X_s, s)ds + \\int_0^t g(X_s, s)dW_s', 
+  'V(t) = \\int_t^T e^{-r(s-t)} E[\\Pi_s | \\mathcal{F}_t] ds', 
+  '\\Delta y_t = \\Pi y_{t-1} + \\sum_{i=1}^{p-1} \\Gamma_i \\Delta y_{t-i} + \\varepsilon_t' 
 ];
 
 interface Vela {
@@ -43,11 +34,13 @@ interface Vela {
   posicionX: number;
 }
 
-interface ItemFormula {
-  texto: string;
+interface ItemFormulaRender {
+  img: HTMLImageElement;
   x: number;
   y: number;
   velocidad: number;
+  anchoImg: number;
+  altoImg: number;
 }
 
 export default function HeroQuantitativeLab() {
@@ -71,62 +64,75 @@ export default function HeroQuantitativeLab() {
     };
     window.addEventListener('resize', ajustarPantalla);
 
-    // --- VARIABLES DE CONTROL Y ESTADO ---
-    // TRUCO SEGURO: Inicializamos el tiempo en 400 en vez de 0.
-    // Así, al cargar la página por primera vez, el dibujo ya va por la mitad del lienzo.
+    // --- VARIABLES DE CONTROL ---
     let tiempo = 400; 
-    
-    // 1. Serie Superior (Ciclo con mayor dinamismo)
     const puntosPIB: { x: number; y: number }[] = [];
-    
-    // 2. Serie Media (Activo Volátil / Random Walk rápido)
     const puntosActivo: { x: number; y: number }[] = [];
     let valorActualActivo = alto * 0.45;
 
-    // 3. Serie Inferior (Velas Japonesas - Frecuencia controlada)
     const listaVelas: Vela[] = [];
-    const anchoVela = 6;
+    const anchoVela = 7; 
     const espacioVela = 4;
     const espacioTotalVela = anchoVela + espacioVela;
     let proximaVelaX = 0;
     let ultimoCierre = alto * 0.78;
 
-    // 4. Capa Matemática (Fórmulas flotantes intermedias)
-    const listaFormulas: ItemFormula[] = [];
+    const formulasEnPantalla: ItemFormulaRender[] = [];
 
-    // --- BUCLE DE RENDERIZADO ---
+    const generarImagenFormula = (latex: string): Promise<{ img: HTMLImageElement; w: number; h: number }> => {
+      return new Promise((resolve) => {
+        const htmlString = katex.renderToString(latex, { displayMode: false, throwOnError: false });
+        const svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="600" height="100">
+            <foreignObject width="100%" height="100%">
+              <div xmlns="http://www.w3.org/1999/xhtml" style="font-size:18px;color:rgba(51,65,85,0.25);padding-top:15px;">
+                ${htmlString}
+              </div>
+            </foreignObject>
+          </svg>
+        `;
+        const img = new Image();
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        img.onload = () => {
+          resolve({ img, w: 450, h: 60 });
+        };
+      });
+    };
+
     const renderizar = () => {
       tiempo += 1;
 
-      // Limpieza del lienzo
       ctx.fillStyle = COLORES.fondo;
       ctx.fillRect(0, 0, ancho, alto);
 
-      // Las líneas se dibujan de izquierda a derecha avanzando según el tiempo
-      const progresoXLineas = (tiempo * 1.4) % ancho;
-      const progresoXVelas = (tiempo * 0.9) % ancho;
+      const progresoXLineas = (tiempo * 1.1) % ancho;
+      const progresoXVelas = (tiempo * 1.1) % ancho;
 
-      // Reset coordinado cuando da la vuelta el ciclo (aquí sí vuelve a 0 de forma natural)
       if (progresoXLineas < 1.5) {
         puntosPIB.length = 0;
         puntosActivo.length = 0;
         listaVelas.length = 0;
-        listaFormulas.length = 0;
+        formulasEnPantalla.length = 0;
         valorActualActivo = alto * 0.45;
         ultimoCierre = alto * 0.78;
         proximaVelaX = 0;
       }
 
-      // Gestor de opacidad para bordes limpios
-      const calcularOpacidadFade = (x: number) => {
-        if (x < 60) return x / 60;
-        if (x > ancho - 60) return (ancho - x) / 60;
-        return 1;
-      };
+      if (tiempo % 140 === 0 && formulasEnPantalla.length < 5) {
+        const latexAleatorio = FORMULAS_LATEX[Math.floor(Math.random() * FORMULAS_LATEX.length)];
+        generarImagenFormula(latexAleatorio).then(({ img, w, h }) => {
+          formulasEnPantalla.push({
+            img,
+            x: ancho * 0.45 + Math.random() * (ancho * 0.30),
+            y: alto * 0.15 + Math.random() * (alto * 0.55),
+            velocidad: 0.15 + Math.random() * 0.2,
+            anchoImg: w,
+            altoImg: h
+          });
+        });
+      }
 
-      // ========================================================
-      // 1. DIBUJO: SERIE SUPERIOR MACRO (Ciclos Dinámicos)
-      // ========================================================
+      // 1. DIBUJO: SERIE SUPERIOR MACRO
       const lineaBasePIB = alto * 0.28;
       const tendenciaPIB = (progresoXLineas / ancho) * -30; 
       const cicloLargo = Math.sin(progresoXLineas * 0.015) * 20; 
@@ -139,7 +145,7 @@ export default function HeroQuantitativeLab() {
       }
 
       ctx.beginPath();
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2.0;
       ctx.strokeStyle = COLORES.pib;
       for (let i = 0; i < puntosPIB.length; i++) {
         if (i === 0) ctx.moveTo(puntosPIB[i].x, puntosPIB[i].y);
@@ -148,7 +154,7 @@ export default function HeroQuantitativeLab() {
       ctx.stroke();
 
       // ========================================================
-      // 2. DIBUJO: PRECIO DE ACTIVO (Zona Media - Rápida)
+      // 2. DIBUJO: PRECIO DE ACTIVO + EJE COORDENADAS + SEÑALES
       // ========================================================
       if (tiempo % 1 === 0) { 
         const cambioAleatorio = (Math.random() - 0.495) * 4.5; 
@@ -156,8 +162,24 @@ export default function HeroQuantitativeLab() {
         puntosActivo.push({ x: progresoXLineas, y: valorActualActivo });
       }
 
+      // --- DIBUJO DEL EJE DE COORDENADAS DINÁMICO ---
+      // Una cruz sutil que sigue la punta de la línea de precio actual
       ctx.beginPath();
-      ctx.lineWidth = 1.75;
+      ctx.strokeStyle = 'rgba(20, 23, 28, 0.04)'; // Súper sutil para no ensuciar
+      ctx.lineWidth = 1;
+      
+      // Línea Vertical (desde arriba hasta el centro)
+      ctx.moveTo(progresoXLineas, 0);
+      ctx.lineTo(progresoXLineas, alto);
+      
+      // Línea Horizontal Cruzada
+      ctx.moveTo(0, valorActualActivo);
+      ctx.lineTo(ancho, valorActualActivo);
+      ctx.stroke();
+
+      // --- DIBUJO DE LA LÍNEA DE PRECIO ---
+      ctx.beginPath();
+      ctx.lineWidth = 2.5;
       ctx.strokeStyle = COLORES.signal;
       for (let i = 0; i < puntosActivo.length; i++) {
         if (i === 0) ctx.moveTo(puntosActivo[i].x, puntosActivo[i].y);
@@ -165,43 +187,60 @@ export default function HeroQuantitativeLab() {
       }
       ctx.stroke();
 
-      // ========================================================
-      // 3. CAPA INTERMEDIA: FÓRMULAS MATEMÁTICAS FLOTANTES
-      // ========================================================
-      if (tiempo % 70 === 0 && listaFormulas.length < 5) {
-        const textoAleatorio = FORMULAS_QUANT[Math.floor(Math.random() * FORMULAS_QUANT.length)];
-        listaFormulas.push({
-          texto: textoAleatorio,
-          x: progresoXLineas,
-          y: alto * 0.32 + Math.random() * (alto * 0.08),
-          velocidad: 0.2 + Math.random() * 0.3 
-        });
+      // --- MARCAS SUTILES DE COMPRA / VENTA (TRIÁNGULOS ALEATORIOS FIJOS) ---
+      for (let i = 10; i < puntosActivo.length; i += 75) { 
+        const p = puntosActivo[i];
+
+        if (p.x > ancho * 0.38 && p.x < ancho - 40) {
+          // Usamos el seno de la posición X para simular aleatoriedad, 
+          // pero que se mantenga fija para esa misma marca en cada frame.
+          const esCompra = Math.sin(p.x) > 0; 
+          
+          ctx.beginPath();
+          ctx.fillStyle = esCompra ? 'rgba(34, 197, 94, 0.75)' : 'rgba(239, 68, 68, 0.75)'; 
+          
+          if (esCompra) {
+            // Triángulo Verde (Compra)
+            ctx.moveTo(p.x, p.y + 10);
+            ctx.lineTo(p.x - 4, p.y + 16);
+            ctx.lineTo(p.x + 4, p.y + 16);
+          } else {
+            // Triángulo Rojo (Venta)
+            ctx.moveTo(p.x, p.y - 10);
+            ctx.lineTo(p.x - 4, p.y - 16);
+            ctx.lineTo(p.x + 4, p.y - 16);
+          }
+          ctx.fill();
+        }
       }
 
-      ctx.font = '10px IBM Plex Mono, monospace';
-      listaFormulas.forEach((formula) => {
-        formula.x += formula.velocidad; 
-        const opacidadBorde = calcularOpacidadFade(formula.x);
-        
-        ctx.fillStyle = `rgba(107, 114, 128, ${0.28 * opacidadBorde})`;
-        ctx.fillText(formula.texto, formula.x, formula.y);
-      });
+      // 3. CAPA INTERMEDIA: FÓRMULAS
+      for (let i = formulasEnPantalla.length - 1; i >= 0; i--) {
+        const f = formulasEnPantalla[i];
+        f.x += f.velocidad;
+        if (f.x > ancho + 100) { formulasEnPantalla.splice(i, 1); continue; }
+        ctx.drawImage(f.img, f.x, f.y - 15);
+      }
 
-      // ========================================================
-      // 4. DIBUJO: VELAS JAPONESAS (Zona Inferior)
-      // ========================================================
+      // 4. MÁSCARA DE DEGRADADO (Sólo tapa las líneas traseras del texto)
+      const degradado = ctx.createLinearGradient(0, 0, ancho, 0);
+      degradado.addColorStop(0, COLORES.fondo);
+      degradado.addColorStop(0.41, COLORES.fondo); 
+      degradado.addColorStop(0.51, 'rgba(250, 250, 247, 0.25)'); 
+      
+      ctx.fillStyle = degradado;
+      ctx.fillRect(0, 0, ancho, alto);
+
+      // 5. DIBUJO: VELAS JAPONESAS (Al final del todo -> Cero niebla)
       if (progresoXVelas >= proximaVelaX) {
         const esAlcista = Math.random() > 0.47; 
-        const tamañoCuerpo = Math.random() * 14 + 2; 
-        
+        const tamañoCuerpo = Math.random() * 14 + 4; 
         const apertura = ultimoCierre;
         const cierre = esAlcista ? apertura - tamañoCuerpo : apertura + tamañoCuerpo;
-        
         const cuerpoMasAlto = Math.min(apertura, cierre);
         const cuerpoMasBajo = Math.max(apertura, cierre);
-        
-        const maximo = cuerpoMasAlto - (Math.random() * 7);
-        const minimo = cuerpoMasBajo + (Math.random() * 7);
+        const maximo = cuerpoMasAlto - (Math.random() * 9 + 1);
+        const minimo = cuerpoMasBajo + (Math.random() * 9 + 1);
 
         if (cierre > alto * 0.88) ultimoCierre = alto * 0.82;
         else if (cierre < alto * 0.65) ultimoCierre = alto * 0.72;
@@ -212,38 +251,29 @@ export default function HeroQuantitativeLab() {
       }
 
       listaVelas.forEach((vela) => {
-        const opacidad = calcularOpacidadFade(vela.posicionX);
-        if (opacidad <= 0) return;
-
+        if (vela.posicionX < ancho * 0.38 || vela.posicionX > ancho - 40) return;
         const esVelaVerde = vela.cierre < vela.apertura; 
         const centroX = Math.floor(vela.posicionX + anchoVela / 2);
 
-        // Mecha
+        // Mechas sólidas
         ctx.beginPath();
-        ctx.strokeStyle = 'rgba(20, 23, 28, 0.12)';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(20, 23, 28, 0.55)';
+        ctx.lineWidth = 1.5;
         ctx.moveTo(centroX, Math.floor(vela.maximo));
         ctx.lineTo(centroX, Math.floor(vela.minimo));
         ctx.stroke();
 
-        // Cuerpo
+        // Cuerpos de alto contraste con borde
         ctx.fillStyle = esVelaVerde ? COLORES.velaAlcista : COLORES.velaBajista;
+        ctx.strokeStyle = 'rgba(20, 23, 28, 0.5)';
+        ctx.lineWidth = 0.75;
+        
         const cuerpoY = Math.floor(Math.min(vela.apertura, vela.cierre));
         const cuerpoH = Math.max(1, Math.floor(Math.abs(vela.apertura - vela.cierre)));
+        
         ctx.fillRect(vela.posicionX, cuerpoY, anchoVela, cuerpoH);
+        ctx.strokeRect(vela.posicionX, cuerpoY, anchoVela, cuerpoH);
       });
-
-      // ========================================================
-      // MÁSCARA DE DEGRADADO (Protección de textos)
-      // ========================================================
-      const degradado = ctx.createLinearGradient(0, 0, ancho, 0);
-      degradado.addColorStop(0, COLORES.fondo);
-      degradado.addColorStop(0.38, COLORES.fondo); 
-      degradado.addColorStop(0.47, 'rgba(250, 250, 247, 0.35)');
-      degradado.addColorStop(1, 'rgba(250, 250, 247, 0)');
-      
-      ctx.fillStyle = degradado;
-      ctx.fillRect(0, 0, ancho, alto);
 
       idAnimacion = requestAnimationFrame(renderizar);
     };
