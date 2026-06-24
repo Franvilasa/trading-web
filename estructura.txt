@@ -1,0 +1,132 @@
+.next
+public
+src
+.gitignore
+.gitignore.txt
+AGENTS.md
+CLAUDE.md
+eslint.config.mjs
+estructura.txt
+next-env.d.ts
+next.config.ts
+package-lock.json
+package.json
+postcss.config.mjs
+README.md
+tsconfig.json
+.next\dev
+.next\dev\cache
+.next\dev\logs
+.next\dev\server
+.next\dev\static
+.next\dev\types
+.next\dev\build-manifest.json
+.next\dev\fallback-build-manifest.json
+.next\dev\lock
+.next\dev\package.json
+.next\dev\prerender-manifest.json
+.next\dev\routes-manifest.json
+.next\dev\trace
+.next\dev\cache\images
+.next\dev\cache\turbopack
+.next\dev\cache\.rscinfo
+.next\dev\cache\next-devtools-config.json
+.next\dev\logs\next-development.log
+.next\dev\server\app
+.next\dev\server\chunks
+.next\dev\server\pages
+.next\dev\server\app-paths-manifest.json
+.next\dev\server\interception-route-rewrite-manifest.js
+.next\dev\server\middleware-build-manifest.js
+.next\dev\server\middleware-manifest.json
+.next\dev\server\next-font-manifest.js
+.next\dev\server\next-font-manifest.json
+.next\dev\server\pages-manifest.json
+.next\dev\server\server-reference-manifest.js
+.next\dev\server\server-reference-manifest.json
+.next\dev\static\chunks
+.next\dev\static\development
+.next\dev\static\media
+.next\dev\types\cache-life.d.ts
+.next\dev\types\routes.d.ts
+.next\dev\types\validator.ts
+public\alertas-operativas
+public\investigacion
+public\file.svg
+public\globe.svg
+public\next.svg
+public\vercel.svg
+public\window.svg
+public\alertas-operativas\ejemplo-mensaje.PNG
+public\investigacion\analisis comparativos PIB.PNG
+public\investigacion\analisis de clubes de convergencia.PNG
+public\investigacion\analisis modelos GMM coeficientes.PNG
+public\investigacion\analisis raices de los polinomios.PNG
+public\investigacion\analisis residuos SP500.PNG
+public\investigacion\analisis resultados variables coeficiente GMM.PNG
+public\investigacion\analisis varianzas GARCH IBEX.PNG
+public\investigacion\codigos cointegracion.PNG
+public\investigacion\codigos en R.PNG
+public\investigacion\descomposicion de series temporales.PNG
+public\investigacion\dl-01-arquitectura.PNG
+public\investigacion\dl-02-ciclo-convolucion.PNG
+public\investigacion\dl-03-codigo-entrenamiento.PNG
+public\investigacion\dl-04-comparativa-predictiva.PNG
+public\investigacion\dl-05-lasso-vs-nn.PNG
+public\investigacion\econometria-01-ljungbox-holtwinters.PNG
+public\investigacion\econometria-02-var-irf.PNG
+public\investigacion\econometria-03-correlogramas.PNG
+public\investigacion\econometria-04-gmm-r.PNG
+public\investigacion\econometria-05-egarch-ibex.PNG
+public\investigacion\especificaciones matematicas modelos, ejemplo philiip sul.PNG
+public\investigacion\evolucion estacional por años.PNG
+public\investigacion\juegos-01-abm-parametrizacion.PNG
+public\investigacion\juegos-02-abm-simulacion.PNG
+public\investigacion\juegos-03-matriz-pagos.PNG
+public\investigacion\juegos-04-juego-bayesiano.PNG
+public\investigacion\matriz de correlaciones.PNG
+public\investigacion\ml-01-decision-tree.png
+public\investigacion\ml-02-lasso-cv.png
+public\investigacion\ml-03-lasso-predicciones.png
+public\investigacion\ml-04-kmeans.PNG
+public\investigacion\ml-05-cluster.JPG
+public\investigacion\prediccion-01-variables-macro.PNG
+public\investigacion\prediccion-02-arim.PNG
+public\investigacion\prediccion-03-curvas-transicion.PNG
+public\investigacion\prediccion-04-serie-contrafactual.PNG
+public\investigacion\prediccion-05-analisis-macro.PNG
+public\investigacion\predicciones cointegracion.PNG
+public\investigacion\predicciones macro.PNG
+public\investigacion\tgarch en R.PNG
+public\investigacion\trading-01-bot-mt5.PNG
+public\investigacion\trading-02-bot-operando.PNG
+public\investigacion\trading-03-bot-operando-2.PNG
+public\investigacion\trading-04-order-manager.PNG
+public\investigacion\trading-05-scroll-codigo.mp4
+src\app
+src\components
+src\lib
+src\app\alertas-operativas
+src\app\contacto
+src\app\investigacion-cuantitativa
+src\app\legal
+src\app\track-record
+src\app\favicon.ico
+src\app\globals.css
+src\app\layout.tsx
+src\app\page.tsx
+src\app\alertas-operativas\page.tsx
+src\app\contacto\page.tsx
+src\app\investigacion-cuantitativa\page.tsx
+src\app\legal\page.tsx
+src\app\track-record\page.tsx
+src\components\BloqueContenido.tsx
+src\components\CarruselCategoria.tsx
+src\components\Footer.tsx
+src\components\HeroQuantitativeLab.tsx
+src\components\InterestModal.tsx
+src\components\MessageExample.tsx
+src\components\Navbar.tsx
+src\components\PricingCard.tsx
+src\lib\constants
+src\lib\constants\alertasOperativas.ts

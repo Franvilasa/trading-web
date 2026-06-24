@@ -1,26 +1,182 @@
-// page.tsx dentro de /app/investigacion-cuantitativa -> URL "/investigacion-cuantitativa"
-import BloqueContenido from "@/components/BloqueContenido";
+// ============================================================================
+// PÁGINA: Investigación Cuantitativa
+// Ruta del archivo en el proyecto: src/app/investigacion-cuantitativa/page.tsx
+// ============================================================================
+// Qué hace esta página: muestra el bloque introductorio (posicionamiento)
+// y una rejilla de 6 tarjetas, una por categoría de conocimiento. Cada
+// tarjeta tiene un carrusel de imágenes/vídeo (capturas reales de trabajos
+// del usuario) con su propio subtítulo por slide.
+//
+// Contenido y decisiones de esta página: ver spec 02.3
+// (02.3-spec-investigacion-cuantitativa-imagenes.md), sesión 2026-06-24.
+// ============================================================================
 
-export default function InvestigacionCuantitativa() {
+import CarruselCategoria, { ItemCarrusel } from "@/components/CarruselCategoria";
+// Nota: el "@/" es un alias que en Next.js suele apuntar a la carpeta "src/".
+// Si en tu proyecto el componente vive en otra ruta, dime y ajustamos el import.
+
+export const metadata = {
+  title: "Investigación Cuantitativa — Lab Cuantitativo",
+  descripcion:
+    "Metodología y conocimiento técnico aplicado: machine learning, econometría, predicción, teoría de juegos y trading cuantitativo.",
+};
+
+// ============================================================================
+// DATOS DE CONTENIDO
+// 6 categorías (Modelos Econométricos y Predicción se separaron en sesión
+// 2026-06-24 por desequilibrio de material — ver spec 02.3, sección 1).
+//
+// IMPORTANTE — nomenclatura de archivos:
+// Las imágenes originales del usuario tienen nombres con espacios/tildes
+// (ej. "analisis efectos EGARCH en el Ibex.PNG"). Para mantener la
+// convención ya iniciada en este archivo, hay que RENOMBRARLAS al
+// colocarlas en public/investigacion/ siguiendo el slug indicado en el
+// comentario de cada item. El vídeo (0623(1).mp4) sigue el mismo criterio.
+// ============================================================================
+type Categoria = {
+  titulo: string;
+  items: ItemCarrusel[];
+};
+
+const categorias: Categoria[] = [
+  {
+    titulo: "Machine Learning",
+    items: [
+      // decision tree.png
+      { imagen: "/investigacion/ml-01-decision-tree.png", subtitulo: "Ejemplo de árbol de decisión" },
+      // lasso_cv_validation_curves.png
+      { imagen: "/investigacion/ml-02-lasso-cv.png", subtitulo: "Validación cruzada de un modelo Lasso" },
+      // lasso_predictions_vs_real.png
+      { imagen: "/investigacion/ml-03-lasso-predicciones.png", subtitulo: "Predicciones Lasso frente a valores reales" },
+      // segmentacion con Kmeans.PNG
+      { imagen: "/investigacion/ml-04-kmeans.png", subtitulo: "Caso de uso de segmentación con K-means" },
+      // visualizacion_cluster.JPG
+      { imagen: "/investigacion/ml-05-cluster.png", subtitulo: "Visualización de clusters" },
+    ],
+  },
+  {
+    titulo: "Deep Learning e IA",
+    items: [
+      // diagrama redes neuronales.PNG
+      { imagen: "/investigacion/dl-01-arquitectura.png", subtitulo: "Arquitectura de una red neuronal" },
+      // Ciclo de entrenamiento de una convolución.PNG
+      { imagen: "/investigacion/dl-02-ciclo-convolucion.png", subtitulo: "Ciclo de entrenamiento de una red convolucional" },
+      // codigo entrenamiento red neuronal.PNG
+      { imagen: "/investigacion/dl-03-codigo-entrenamiento.png", subtitulo: "Código de entrenamiento de una red neuronal" },
+      // comparaciones predictivas con deep learning sobre datos historicos.PNG
+      { imagen: "/investigacion/dl-04-comparativa-predictiva.png", subtitulo: "Comparativa predictiva con deep learning" },
+      // test comparacion lasso vs nn.PNG
+      { imagen: "/investigacion/dl-05-lasso-vs-nn.png", subtitulo: "Lasso frente a red neuronal" },
+    ],
+  },
+  {
+    titulo: "Modelos Econométricos",
+    items: [
+      // analisisi de residuos Ljung-Box sobre Holt-Winters.PNG
+      { imagen: "/investigacion/econometria-01-ljungbox-holtwinters.png", subtitulo: "Test de residuos sobre un modelo Holt-Winters" },
+      // extracto expresiones mates.PNG (Cholesky / IRF de un VAR)
+      { imagen: "/investigacion/econometria-02-var-irf.png", subtitulo: "Funciones de impulso-respuesta de un modelo VAR" },
+      // correlogramas.PNG
+      { imagen: "/investigacion/econometria-03-correlogramas.png", subtitulo: "Ejemplo de correlograma" },
+      // especificaciones codigo R modelos GMM.PNG
+      { imagen: "/investigacion/econometria-04-gmm-r.png", subtitulo: "Especificación en R de un modelo GMM" },
+      // analisis efectos EGARCH en el Ibex.PNG
+      { imagen: "/investigacion/econometria-05-egarch-ibex.png", subtitulo: "Modelo EGARCH aplicado al Ibex" },
+    ],
+  },
+  {
+    titulo: "Predicción",
+    items: [
+      // prediciciones sobre variables macroeconomicas.PNG
+      { imagen: "/investigacion/prediccion-01-variables-macro.png", subtitulo: "Predicción de variables macroeconómicas" },
+      // prediccion arima.PNG
+      { imagen: "/investigacion/prediccion-02-arima.png", subtitulo: "Ejemplo de predicción ARIMA" },
+      // curvas de transicion clubes convergencia.PNG
+      { imagen: "/investigacion/prediccion-03-curvas-transicion.png", subtitulo: "Caso de uso de curvas de transición" },
+      // construccion de serie contrafactual en ausencia de datos.PNG
+      { imagen: "/investigacion/prediccion-04-serie-contrafactual.png", subtitulo: "Construcción de una serie contrafactual" },
+      // analisis variables macro.PNG
+      { imagen: "/investigacion/prediccion-05-analisis-macro.png", subtitulo: "Análisis de variables macro" },
+    ],
+  },
+  {
+    titulo: "Teoría de Juegos",
+    items: [
+      // parametrizacion inicial de ABM.PNG
+      { imagen: "/investigacion/juegos-01-abm-parametrizacion.png", subtitulo: "Parametrización de un modelo basado en agentes" },
+      // simulaciones de un AMB emergencia de patrones.PNG
+      { imagen: "/investigacion/juegos-02-abm-simulacion.png", subtitulo: "Emergencia de patrones en una simulación ABM" },
+      // matriz de pagos ABM1.PNG
+      { imagen: "/investigacion/juegos-03-matriz-pagos.png", subtitulo: "Ejemplo de matriz de pagos" },
+      // representacion de juego bayesiano solo 2 jugadores.PNG
+      { imagen: "/investigacion/juegos-04-juego-bayesiano.png", subtitulo: "Representación de un juego bayesiano" },
+      // Nota: 4 items, no 5 — aceptado así (spec 02.3, sección 2.5).
+      // Ampliable más adelante sin tocar el componente.
+    ],
+  },
+  {
+    titulo: "Probabilidad y Trading Cuantitativo",
+    items: [
+      // codigo bot y mt5 operando.PNG
+      { imagen: "/investigacion/trading-01-bot-mt5.png", subtitulo: "Bot de trading operando sobre MT5" },
+      // pantallazo bot operando.PNG
+      { imagen: "/investigacion/trading-02-bot-operando.png", subtitulo: "Bot en ejecución en tiempo real" },
+      // pantallazo bot operando2.PNG
+      { imagen: "/investigacion/trading-03-bot-operando-2.png", subtitulo: "Otro ejemplo de operativa del bot" },
+      // pantallazo snipet order manager.PNG
+      { imagen: "/investigacion/trading-04-order-manager.png", subtitulo: "Fragmento del gestor de órdenes" },
+      // 0623(1).mp4 — vídeo, no imagen (spec 02.3, sección 3)
+      { video: "/investigacion/trading-05-scroll-codigo.mp4", subtitulo: "Recorrido por el código del sistema" },
+    ],
+  },
+];
+
+export default function PaginaInvestigacionCuantitativa() {
   return (
-    <section className="max-w-5xl mx-auto px-6 py-16 space-y-8">
-      <h1 className="text-3xl font-bold mb-2">Investigación Cuantitativa</h1>
-      <p className="text-neutral-600 max-w-2xl">
-        Lorem ipsum dolor sit amet consectetur adipiscing elit.
-      </p>
+    <main className="max-w-[1200px] mx-auto px-6 py-16 flex flex-col gap-12">
+      {/* --------------------------------------------------------------
+          BLOQUE INTRODUCTORIO
+          Texto corto de posicionamiento, encima de la rejilla.
+          El texto de abajo es un PLACEHOLDER (copy final pendiente,
+          ver spec 02.3, sección 5.2 — sin fecha asignada todavía).
+      -------------------------------------------------------------- */}
+      <header className="max-w-[700px]">
+        <h1 className="font-[Fraunces] text-[var(--ink)] text-4xl mb-4">
+          Investigación Cuantitativa
+        </h1>
+        <p className="font-[Inter] text-[var(--muted)] text-lg">
+          Proceso de mejora continua permanente: desarrollo científico
+          aplicado, desde modelos econométricos hasta teoría de juegos.
+        </p>
+      </header>
 
-      {/* Cada bloque representa un "tipo" de modelo, sin revelar el detalle del alpha */}
-      <BloqueContenido titulo="Análisis econométrico">
-        Lorem ipsum dolor sit amet consectetur adipiscing elit.
-      </BloqueContenido>
+      {/* --------------------------------------------------------------
+          LISTA DE TARJETAS (una debajo de otra, no en rejilla)
+          Cada tarjeta es horizontal por dentro: título (y, a futuro,
+          texto de apoyo) a la izquierda, carrusel a la derecha — igual
+          que el planteamiento del Hero del Home. En móvil se apila.
+      -------------------------------------------------------------- */}
+      <div className="flex flex-col gap-10">
+        {categorias.map((categoria) => (
+          <section
+            key={categoria.titulo}
+            className="bg-[var(--bg)] border border-[var(--line)] rounded-lg p-6 flex flex-col md:flex-row md:items-start gap-6"
+          >
+            {/* Columna de texto: título de la categoría (fijo).
+                md:w-1/3 = un tercio del ancho en pantallas medianas+. */}
+            <div className="md:w-1/3 flex-shrink-0">
+              <h2 className="font-[Fraunces] text-[var(--ink)] text-2xl">
+                {categoria.titulo}
+              </h2>
+            </div>
 
-      <BloqueContenido titulo="Modelos de aprendizaje automático">
-        Lorem ipsum dolor sit amet consectetur adipiscing elit.
-      </BloqueContenido>
-
-      <BloqueContenido titulo="Gestión de riesgo">
-        Lorem ipsum dolor sit amet consectetur adipiscing elit.
-      </BloqueContenido>
-    </section>
+            {/* Columna del carrusel: ocupa el resto del ancho disponible. */}
+            <div className="md:w-2/3 w-full">
+              <CarruselCategoria items={categoria.items} />
+            </div>
+          </section>
+        ))}
+      </div>
+    </main>
   );
 }
