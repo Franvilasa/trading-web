@@ -52,7 +52,9 @@ export function LiveSignalDemo() {
       ctx!.scale(devicePixelRatio, devicePixelRatio);
     }
     fit();
-    window.addEventListener("resize", fit);
+
+    const resizeObserver = new ResizeObserver(fit);
+    resizeObserver.observe(canvas);
 
     const alto = 160;
     const anchoVela = 6,
@@ -65,7 +67,7 @@ export function LiveSignalDemo() {
     let progresoXVelas = 0;
 
     const VELOCIDAD = 0.9 * 0.85; // -15% velocidad de generación de velas
-    const VOLATILIDAD = 1.2; // +20% tamaño de cuerpo/mechas
+    const VOLATILIDAD = 1.5; // +20% tamaño de cuerpo/mechas
 
     let marcadores: Marcador[] = [];
     let lineasAlerta: LineaAlerta[] = [];
@@ -97,7 +99,6 @@ export function LiveSignalDemo() {
       return null;
     }
 
-    const VISIBLE_W = 600;
     let scrollOffset = 0;
     let state: EstadoBot = "wait";
     let stateTimer = 0;
@@ -115,8 +116,8 @@ export function LiveSignalDemo() {
 
     function loop() {
       const nueva = generarVelaSiToca();
-      scrollOffset = Math.max(0, proximaVelaX - VISIBLE_W + 40);
-      if (nueva) listaVelas = listaVelas.filter((v) => v.posicionX > scrollOffset - 40);
+      scrollOffset = Math.max(0, proximaVelaX - canvas!.clientWidth + 120);
+      if (nueva) listaVelas = listaVelas.filter((v) => v.posicionX > scrollOffset - 120);
 
       stateTimer++;
       if (state === "wait" && stateTimer > 130) {
@@ -251,7 +252,7 @@ export function LiveSignalDemo() {
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", fit);
+      resizeObserver.disconnect();
     };
   }, []);
 
@@ -262,7 +263,7 @@ export function LiveSignalDemo() {
       <div
         className="rounded-lg border border-[var(--line)] bg-[var(--bg)] p-4"
       >
-        <div className="overflow-hidden rounded-lg bg-white" style={{ height: 270 }}>
+        <div className="overflow-hidden rounded-lg bg-white" style={{ height: 280 }}>
           <div className="flex items-center justify-between px-3.5 py-2.5 font-mono text-[11px] text-[var(--muted)]">
             <span className="tracking-wide">EURUSD · simulación</span>
             <span className="flex items-center gap-1.5">
@@ -292,7 +293,7 @@ export function LiveSignalDemo() {
             </div>
           </div>
 
-          <div className="h-[34px] overflow-hidden px-3.5 pb-2.5 font-mono text-[10.5px] leading-relaxed text-[var(--muted)]">
+          <div className="h-[34px] overflow-hidden px-3.5 pb-2.5 font-mono text-[10.5px] leading-snug text-[var(--muted)]">
             {log.map((line, i) => (
               <div key={i}>{line}</div>
             ))}
