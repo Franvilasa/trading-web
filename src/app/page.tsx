@@ -1,24 +1,25 @@
-// --- IMPORTACIÓN DEL COMPONENTE ANIMADO ---
-// Le decimos a Next.js que traiga el diseño que acabamos de guardar en la carpeta de componentes
+// --- IMPORTACIÓN DE COMPONENTES ---
 import HeroQuantitativeLab from '@/components/HeroQuantitativeLab';
+import PropuestaValor from '@/components/PropuestaValor';
 
 export default function Home() {
   return (
     // Contenedor principal de la página de inicio (Home)
     <main className="min-h-screen bg-[#FAFAF7]">
-      
-      {/* Inyectamos el Hero animado aquí arriba. 
-        Automáticamente ocupará el ancho completo y el diseño que programamos.
-      */}
+
+      {/* Hero animado: no se toca, está cerrado en el spec (sección 6) */}
       <HeroQuantitativeLab />
 
+      {/* Bloque de Propuesta de Valor: 3 frases + 2 CTAs (Track Record / Alertas Operativas) */}
+      <PropuestaValor />
+
       {/* ZONA PROVISIONAL DE CONTENIDO:
-        Aquí es donde en el futuro añadiremos el resto de bloques de la Home 
-        (Métricas, Pilares de investigación, Equipo, etc.) según lo vayamos decidiendo.
+        Próximos módulos posibles (futuro, no v1): KPIs (rentabilidad acumulada/anual),
+        carrusel de redes sociales, enlace a simulador ABM / Wyckoff.
       */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
         <p className="text-xs font-mono text-[#6B7280]">
-          [ Módulos del Home en desarrollo: Bloque de métricas, Pilares y Equipo ]
+          [ Próximos módulos del Home: KPIs, carrusel de redes, ABM/Wyckoff ]
         </p>
       </div>
 

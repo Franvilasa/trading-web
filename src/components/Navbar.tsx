@@ -6,13 +6,12 @@ import Link from "next/link";
 
 // Definimos aquí la lista de secciones del menú.
 // Si en el futuro quieres añadir o quitar una sección, solo tocas esta lista.
+// Contacto y Legal NO van aquí: viven en el Footer (decisión de minimalismo, sesión 2026-06-25).
 const enlaces = [
   { texto: "Inicio", ruta: "/" },
   { texto: "Track Record", ruta: "/track-record" },
   { texto: "Investigación Cuantitativa", ruta: "/investigacion-cuantitativa" },
   { texto: "Alertas Operativas", ruta: "/alertas-operativas" },
-  { texto: "Contacto", ruta: "/contacto" },
-  { texto: "Legal", ruta: "/legal" },
 ];
 
 export default function Navbar() {
@@ -27,7 +26,7 @@ export default function Navbar() {
         </Link>
 
         {/* Recorremos la lista "enlaces" y generamos un <Link> por cada uno.
-            Esto evita escribir 6 veces el mismo bloque de código a mano. */}
+            Esto evita escribir el mismo bloque de código a mano por cada sección. */}
         <ul className="hidden md:flex gap-6 text-sm text-neutral-600">
           {enlaces.map((enlace) => (
             <li key={enlace.ruta}>

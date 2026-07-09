@@ -7,6 +7,7 @@ AGENTS.md
 CLAUDE.md
 eslint.config.mjs
 estructura.txt
+estructura1.txt
 next-env.d.ts
 next.config.ts
 package-lock.json
@@ -15,6 +16,7 @@ postcss.config.mjs
 README.md
 tsconfig.json
 .next\dev
+.next\_events_8860.json
 .next\dev\cache
 .next\dev\logs
 .next\dev\server
@@ -122,11 +124,18 @@ src\app\legal\page.tsx
 src\app\track-record\page.tsx
 src\components\BloqueContenido.tsx
 src\components\CarruselCategoria.tsx
+src\components\ContactoForm.tsx
 src\components\Footer.tsx
 src\components\HeroQuantitativeLab.tsx
 src\components\InterestModal.tsx
+src\components\LiveSignalDemo.tsx
 src\components\MessageExample.tsx
 src\components\Navbar.tsx
 src\components\PricingCard.tsx
+src\components\PropuestaValor.tsx
 src\lib\constants
 src\lib\constants\alertasOperativas.ts
+src\lib\constants\contacto.ts
+src\lib\constants\home.ts
+src\lib\constants\legal.ts
+src\lib\constants\trackRecord.ts
