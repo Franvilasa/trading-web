@@ -7,7 +7,6 @@ AGENTS.md
 CLAUDE.md
 eslint.config.mjs
 estructura.txt
-estructura1.txt
 next-env.d.ts
 next.config.ts
 package-lock.json
@@ -24,7 +23,6 @@ tsconfig.json
 .next\dev\types
 .next\dev\build-manifest.json
 .next\dev\fallback-build-manifest.json
-.next\dev\lock
 .next\dev\package.json
 .next\dev\prerender-manifest.json
 .next\dev\routes-manifest.json
@@ -92,12 +90,10 @@ public\investigacion\ml-02-lasso-cv.png
 public\investigacion\ml-03-lasso-predicciones.png
 public\investigacion\ml-04-kmeans.PNG
 public\investigacion\ml-05-cluster.JPG
-public\investigacion\prediccion-01-variables-macro.PNG
 public\investigacion\prediccion-02-arim.PNG
 public\investigacion\prediccion-03-curvas-transicion.PNG
 public\investigacion\prediccion-04-serie-contrafactual.PNG
 public\investigacion\prediccion-05-analisis-macro.PNG
-public\investigacion\predicciones cointegracion.PNG
 public\investigacion\predicciones macro.PNG
 public\investigacion\tgarch en R.PNG
 public\investigacion\trading-01-bot-mt5.PNG
