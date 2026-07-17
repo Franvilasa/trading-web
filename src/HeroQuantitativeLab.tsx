@@ -106,7 +106,7 @@ export default function HeroQuantitativeLab() {
 // Cuanto mayor es x, mayor es la escala (los elementos se agrandan).
 const proyectar = (x: number, y: number, ancho: number, alto: number) => {
   // Escala desde 1.0 (izquierda) hasta 1.8 (derecha)
-  const escala = 0.1 + (x / ancho) * 1.3; 
+  const escala = 0.3 + (x / ancho) * 1.5; 
   // Las coordenadas no se mueven, solo se escala el dibujo
   return { px: x, py: y, escala };
 };
@@ -137,7 +137,7 @@ const proyectar = (x: number, y: number, ancho: number, alto: number) => {
         formulasEnPantalla.push({
           img,
           x: ancho * 0.45 + Math.random() * (ancho * 0.30),
-          y: alto * 0.09 + Math.random() * (alto * 0.55),
+          y: alto * 0.15 + Math.random() * (alto * 0.55),
           velocidad: 0.15 + Math.random() * 0.2,
           anchoImg: w,
           altoImg: h
@@ -148,8 +148,8 @@ const proyectar = (x: number, y: number, ancho: number, alto: number) => {
     // 1. SERIE PIB (MACRO) con perspectiva
     const lineaBasePIB = alto * 0.28;
     const tendenciaPIB = (progresoXLineas / ancho) * -30;
-    const cicloLargo = Math.sin(progresoXLineas * 0.032) * 20;
-    const cicloCorto = Math.cos(progresoXLineas * 0.12) * 6;
+    const cicloLargo = Math.sin(progresoXLineas * 0.015) * 20;
+    const cicloCorto = Math.cos(progresoXLineas * 0.05) * 6;
     const ruidoPIB = Math.sin(progresoXLineas * 0.3) * 1.5;
     const pibYActual = lineaBasePIB + tendenciaPIB + cicloLargo + cicloCorto + ruidoPIB;
 
@@ -190,7 +190,7 @@ const proyectar = (x: number, y: number, ancho: number, alto: number) => {
       const { px, py } = proyectar(ultimoPunto.x, ultimoPunto.y, ancho, alto);
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(20, 23, 28, 0.04)';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1;
       ctx.moveTo(px, 0);
       ctx.lineTo(px, alto);
       ctx.moveTo(0, py);
@@ -252,8 +252,8 @@ const proyectar = (x: number, y: number, ancho: number, alto: number) => {
       const maximo = cuerpoMasAlto - (Math.random() * 9 + 1);
       const minimo = cuerpoMasBajo + (Math.random() * 9 + 1);
 
-      if (cierre > alto * 0.95) ultimoCierre = alto * 0.82;
-      else if (cierre < alto * 0.55) ultimoCierre = alto * 0.72;
+      if (cierre > alto * 0.88) ultimoCierre = alto * 0.82;
+      else if (cierre < alto * 0.65) ultimoCierre = alto * 0.72;
       else ultimoCierre = cierre;
 
       listaVelas.push({ apertura, maximo, minimo, cierre, posicionX: proximaVelaX });
@@ -261,7 +261,7 @@ const proyectar = (x: number, y: number, ancho: number, alto: number) => {
     }
 
     listaVelas.forEach((vela) => {
-      if (vela.posicionX < ancho * 0.41 || vela.posicionX > ancho - 40) return;
+      if (vela.posicionX < ancho * 0.38 || vela.posicionX > ancho - 40) return;
 
       const { px, py, escala } = proyectar(vela.posicionX, (vela.apertura + vela.cierre) / 2, ancho, alto);
       const esVelaVerde = vela.cierre < vela.apertura;
@@ -305,21 +305,21 @@ const proyectar = (x: number, y: number, ancho: number, alto: number) => {
 }, []);
 
   return (
-    <div className="relative w-full h-[405px] bg-[#FAFAF7] overflow-hidden border-b border-[#E3E1DC]">
+    <div className="relative w-full h-[480px] bg-[#FAFAF7] overflow-hidden border-b border-[#E3E1DC]">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
       <div className="relative z-10 max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center">
         <div className="w-full md:w-[40%] text-left space-y-4 pointer-events-none select-none">
           <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded bg-[#2D5D6B]/10 border border-[#2D5D6B]/20 text-[10px] font-mono tracking-wider text-[#2D5D6B]">
             <span className="w-1 h-1 rounded-full bg-[#2D5D6B] animate-pulse" />
-            LABORATORIO I+D+i
+            QUANT RESEARCH LAB
           </div>
           <h1 className="text-3xl md:text-4xl font-bold font-sans tracking-tight text-[#14171C]">
-            Análisis Económico <br />
-            <span className="text-[#2D5D6B]">Cuantitativo</span>
+            Modelos de <br />
+            <span className="text-[#2D5D6B]">Inferencia Estadística</span>
           </h1>
           <p className="text-xs font-mono leading-relaxed text-[#6B7280]">
-            Modelos econométricos y de machine learning validados <br /> con track record real.
+            Análisis cuantitativo de series temporales y optimización matemática aplicado a estrategias de trading algorítmico sistemático.
           </p>
         </div>
         <div className="hidden md:block md:w-[60%] h-full" />

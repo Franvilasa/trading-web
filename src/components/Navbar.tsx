@@ -6,7 +6,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
+import { MARCA } from "@/lib/constants/marca";
 
 const enlaces = [
   { texto: "Inicio", ruta: "/" },
@@ -21,17 +23,26 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="border-b border-neutral-200 bg-white sticky top-0 z-50">
+    <header className="border-b border-line bg-bg sticky top-0 z-50">
       <nav className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <Link href="/" className="font-semibold text-lg tracking-tight">
-          NombreEmpresa
+        {/* Logo — isotipo con wordmark integrado (ver src/lib/constants/marca.ts).
+            Provisional: MARCA.logo.esProvisional queda como recordatorio de que
+            este archivo se sustituye cuando llegue el diseño definitivo. */}
+        <Link href="/" className="flex items-center">
+          <Image
+            src={MARCA.logo.src}
+            alt={MARCA.logo.alt}
+            width={140}
+            height={36}
+            priority
+            className="h-20 w-auto"
+          />
         </Link>
 
         {/* --- BOTÓN HAMBURGUESA (solo visible en móvil) --- */}
         <button
           onClick={() => setIsOpen(!isOpen)} // Al pulsar, cambia entre abierto/cerrado
-          className="md:hidden p-2 rounded-md hover:bg-neutral-100"
+          className="md:hidden p-2 rounded-md hover:bg-line/40"
           aria-label="Menú de navegación"
         >
           {/* Icono de tres rayas (SVG simple) */}
@@ -51,10 +62,10 @@ export default function Navbar() {
         </button>
 
         {/* --- MENÚ DE ESCRITORIO (visible en pantallas grandes) --- */}
-        <ul className="hidden md:flex gap-6 text-sm text-neutral-600">
+        <ul className="hidden md:flex gap-6 text-sm text-muted">
           {enlaces.map((enlace) => (
             <li key={enlace.ruta}>
-              <Link href={enlace.ruta} className="hover:text-neutral-900 transition-colors">
+              <Link href={enlace.ruta} className="hover:text-ink transition-colors">
                 {enlace.texto}
               </Link>
             </li>
@@ -64,13 +75,13 @@ export default function Navbar() {
 
       {/* --- MENÚ DE MÓVIL DESPLEGABLE (se muestra cuando isOpen es true) --- */}
       {/* Si isOpen es true, añade "flex"; si es false, añade "hidden" */}
-      <div className={`${isOpen ? "flex" : "hidden"} md:hidden flex-col items-center gap-4 pb-4 border-t border-neutral-200 pt-4 bg-white`}>
+      <div className={`${isOpen ? "flex" : "hidden"} md:hidden flex-col items-center gap-4 pb-4 border-t border-line pt-4 bg-bg`}>
         {enlaces.map((enlace) => (
           <Link
             key={enlace.ruta}
             href={enlace.ruta}
             onClick={() => setIsOpen(false)} // Al hacer clic en un enlace, se cierra el menú
-            className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
+            className="text-sm text-muted hover:text-ink transition-colors"
           >
             {enlace.texto}
           </Link>

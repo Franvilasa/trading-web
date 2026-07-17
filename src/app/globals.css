@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Tokens de marca GOLDEA (ver 04-manual-marca.md, sección 3.1) --- */
+  --bg: #FFFFFF;
+  --ink: #2D3139;
+  --muted: #6B7280;
+  --alert: #C8852A;
+  --signal: rgba(45, 93, 107, 0.65);
+  --pib: rgba(20, 23, 28, 0.20);
+  --vela-alcista: rgba(45, 110, 125, 0.90);
+  --vela-bajista: rgba(215, 126, 34, 0.90);
+  --line: #E3E1DC;
+
+  /* Alias que espera la plantilla de Next.js — apuntan a los tokens reales de arriba
+     en vez de tener su propia paleta duplicada. */
+  --background: var(--bg);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Tokens de marca expuestos como clases Tailwind: bg-bg, text-ink, text-muted,
+     border-line, text-alert, etc. Sustituyen a las clases genéricas neutral-X. */
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-alert: var(--alert);
+  --color-signal: var(--signal);
+  --color-pib: var(--pib);
+  --color-vela-alcista: var(--vela-alcista);
+  --color-vela-bajista: var(--vela-bajista);
+  --color-line: var(--line);
+
+  /* TODO: cuando se añada next/font en layout.tsx (Inter + IBM Plex Mono),
+     estas dos líneas deben apuntar a las variables que genere next/font
+     (ej. var(--font-inter), var(--font-plex-mono)) en vez de al fallback de sistema. */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Se elimina el modo oscuro automático (prefers-color-scheme) de la plantilla:
+   la marca usa fondo blanco fijo (manual de marca, sección 3.1). No hay versión
+   dark definida todavía — si se necesita en el futuro, se diseña a propósito
+   en vez de heredar el dark mode por defecto de Next.js. */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
 }
