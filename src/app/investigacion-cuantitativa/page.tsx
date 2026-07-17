@@ -51,7 +51,7 @@ const categorias: Categoria[] = [
       // segmentacion con Kmeans.PNG
       { imagen: "/investigacion/ml-04-kmeans.png", subtitulo: "Caso de uso de segmentación con K-means" },
       // visualizacion_cluster.JPG
-      { imagen: "/investigacion/ml-05-cluster.png", subtitulo: "Visualización de clusters" },
+      { imagen: "/investigacion/ml-05-cluster.jpg", subtitulo: "Visualización de clusters" },
     ],
   },
   {
