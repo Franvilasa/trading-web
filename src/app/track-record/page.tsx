@@ -20,21 +20,21 @@ export const metadata = {
 export default function PaginaTrackRecord() {
   return (
     <main className="max-w-[900px] mx-auto px-6 py-16 flex flex-col gap-8">
-      <h1 className="font-[Fraunces] text-[var(--ink)] text-4xl">
+      <h1 className="font-[Fraunces] text-ink text-4xl">
         Track Record
       </h1>
 
       {/* TEXTO DE CONTEXTO: qué es el JTBB, por qué los datos son fiables */}
-      <p className="text-[var(--ink)] text-base leading-relaxed max-w-[760px]">
+      <p className="text-ink text-base leading-relaxed max-w-[760px]">
         {TRACK_RECORD.contexto}
       </p>
 
       {/* ------------------------------------------------------------------
           TARJETA 1: Gráfico de evolución del DARWIN JTBB
       ------------------------------------------------------------------ */}
-      <section className="bg-[var(--bg)] border border-[var(--line)] rounded-lg p-6 flex justify-center">
+      <section className="bg-bg border border-line rounded-lg p-6 flex justify-center">
         <a
-          href="https://www.darwinex.com/invest/JTBB?utm_source=WidgetDarwin&utm_medium=Referral&utm_campaign=WidgetChart&utm_content=fxhack"
+          href={TRACK_RECORD.darwinZeroUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -49,9 +49,9 @@ export default function PaginaTrackRecord() {
       {/* ------------------------------------------------------------------
           TARJETA 2: Tabla de rentabilidades del DARWIN JTBB
       ------------------------------------------------------------------ */}
-      <section className="bg-[var(--bg)] border border-[var(--line)] rounded-lg p-6 flex justify-center">
+      <section className="bg-bg border border-line rounded-lg p-6 flex justify-center">
         <a
-          href="https://www.darwinex.com/invest/JTBB?utm_source=WidgetDarwin&utm_medium=Referral&utm_campaign=WidgetReturn&utm_content=fxhack"
+          href={TRACK_RECORD.darwinZeroUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -67,19 +67,35 @@ export default function PaginaTrackRecord() {
           BLOQUE INVERTIBLE: qué significa "invertible" + botón a Darwinex
           (en el futuro, aquí mismo pueden añadirse enlaces a vídeos, etc.)
       ------------------------------------------------------------------ */}
-      <section className="border-t border-[var(--line)] pt-8 flex flex-col gap-4">
-        <p className="text-[var(--ink)] text-base leading-relaxed max-w-[760px]">
+      <section className="border-t border-line pt-8 flex flex-col gap-4">
+        <p className="text-ink text-base leading-relaxed max-w-[760px]">
           {TRACK_RECORD.invertible}
         </p>
 
+        {/* Botón principal: solo consulta de rendimiento, sin restricción geográfica */}
         <a
-          href={TRACK_RECORD.botonInvertir.href}
+          href={TRACK_RECORD.botonVerPerformance.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center self-start px-5 py-2.5 rounded border border-[#2D5D6B] text-[#2D5D6B] text-sm font-medium font-mono tracking-tight hover:bg-[#2D5D6B] hover:text-[#FAFAF7] transition-colors"
+          className="inline-flex items-center self-start px-5 py-2.5 rounded border border-signal text-signal text-sm font-medium font-mono tracking-tight hover:bg-signal hover:text-bg transition-colors"
         >
-          {TRACK_RECORD.botonInvertir.label}
+          {TRACK_RECORD.botonVerPerformance.label}
         </a>
+
+        {/* Enlace secundario, discreto (no botón): invertir de verdad en Darwinex.
+            Restringido geográficamente por Darwinex, de ahí la nota junto al enlace. */}
+        <p className="text-xs font-mono text-muted">
+          <a
+            href={TRACK_RECORD.enlaceInvertir.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-signal transition-colors"
+          >
+            {TRACK_RECORD.enlaceInvertir.label}
+          </a>
+          {" — "}
+          {TRACK_RECORD.enlaceInvertir.nota}
+        </p>
       </section>
 
       {/* NOTA: el disclaimer legal NO va aquí a propósito.
