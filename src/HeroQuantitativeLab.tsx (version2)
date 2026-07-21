@@ -4,19 +4,6 @@ import React, { useEffect, useRef } from 'react';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 
-// --- CONFIGURACIÓN DEL SISTEMA DE DISEÑO ---
-// Colores hardcodeados a propósito (decisión de esta sesión): el canvas 2D
-// no lee variables CSS directamente, así que se mantienen igual que en la
-// versión original. Migrar a tokens queda pendiente para otra sesión.
-const COLORES = {
-  fondo: '#FAFAF7',
-  textoInk: '#14171C',
-  pib: 'rgba(20, 23, 28, 0.20)',
-  signal: 'rgba(45, 93, 107, 0.65)',
-  velaAlcista: 'rgba(45, 110, 125, 0.90)',
-  velaBajista: 'rgba(215, 126, 34, 0.90)',
-};
-
 const FORMULAS_LATEX = [
   'dM_t = \\theta(\\mu - M_t)dt + \\sigma dW_t',
   'E[R_i] = R_f + \\beta_i(E[R_m] - R_f)',
@@ -28,6 +15,11 @@ const FORMULAS_LATEX = [
   'V(t) = \\int_t^T e^{-r(s-t)} E[\\Pi_s | \\mathcal{F}_t] ds',
   '\\Delta y_t = \\Pi y_{t-1} + \\sum_{i=1}^{p-1} \\Gamma_i \\Delta y_{t-i} + \\varepsilon_t'
 ];
+
+// Umbral horizontal (fracción del ancho) a partir del cual se dibujan velas/señales.
+// Antes era 0.38 y chocaba con el bloque de texto (md:w-[40%]); se sube a 0.46
+// para dejar aire entre el texto y la primera vela.
+const UMBRAL_INICIO_DATOS = 0.46;
 
 interface Vela {
   apertura: number;
@@ -56,6 +48,24 @@ export default function HeroQuantitativeLab() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // --- COLORES: leídos de los tokens reales de globals.css (04-manual-marca.md),
+    // no hardcodeados. Se resuelven aquí porque getComputedStyle necesita el DOM,
+    // que solo existe dentro de useEffect (cliente).
+    const raiz = getComputedStyle(document.documentElement);
+    const obtenerToken = (variable: string, fallback: string) => {
+      const valor = raiz.getPropertyValue(variable).trim();
+      return valor || fallback;
+    };
+    const COLORES = {
+      fondo: obtenerToken('--bg', '#FFFFFF'),
+      textoInk: obtenerToken('--ink', '#2D3139'),
+      pib: obtenerToken('--pib', 'rgba(20, 23, 28, 0.20)'),
+      signal: obtenerToken('--signal', 'rgba(45, 93, 107, 0.65)'),
+      velaAlcista: obtenerToken('--vela-alcista', 'rgba(45, 110, 125, 0.90)'),
+      velaBajista: obtenerToken('--vela-bajista', 'rgba(215, 126, 34, 0.90)'),
+      line: obtenerToken('--line', '#E3E1DC'),
+    };
+
     let idAnimacion: number;
     let ancho = (canvas.width = canvas.offsetWidth);
     let alto = (canvas.height = canvas.offsetHeight);
@@ -67,8 +77,8 @@ export default function HeroQuantitativeLab() {
     };
     window.addEventListener('resize', ajustarPantalla);
 
-    // --- VARIABLES DE CONTROL (idénticas a la versión original) ---
-    let tiempo = 0;
+    // --- VARIABLES DE ESTADO ---
+    let tiempo = 400;
     const puntosPIB: { x: number; y: number }[] = [];
     const puntosActivo: { x: number; y: number }[] = [];
     let valorActualActivo = alto * 0.45;
@@ -102,33 +112,57 @@ export default function HeroQuantitativeLab() {
       });
     };
 
-    // --- PROYECCIÓN SIMPLE (efecto Star Wars) ---
-    // Cuanto mayor es x, mayor es la escala (los elementos se agrandan).
+    // --- PROYECCIÓN (efecto "Star Wars"): cuanto más a la derecha, más grande ---
     const proyectar = (x: number, y: number, ancho: number, alto: number) => {
-      const escala = 0.3 + (x / ancho) * 1.5;
+      const escala = 0.1 + (x / ancho) * 1.3;
       return { px: x, py: y, escala };
     };
 
-    // --- RENDERIZADO PRINCIPAL ---
-    const renderizar = () => {
+    // --- AVANZAR ESTADO (un "tick" de simulación, sin dibujar nada) ---
+    // Separado de dibujarFrame() para poder adelantar varios ticks de golpe
+    // cuando el ciclo se reinicia (punto 3: evitar que el Hero se vea vacío).
+    const avanzarEstado = () => {
       tiempo += 1;
-
-      ctx.fillStyle = COLORES.fondo;
-      ctx.fillRect(0, 0, ancho, alto);
-
       const progresoXLineas = (tiempo * 1.1) % ancho;
-      const progresoXVelas = (tiempo * 1.1) % ancho;
+      const progresoXVelas = progresoXLineas;
 
-      if (progresoXLineas < 1.5) {
-        puntosPIB.length = 0;
-        puntosActivo.length = 0;
-        listaVelas.length = 0;
-        formulasEnPantalla.length = 0;
-        valorActualActivo = alto * 0.45;
-        ultimoCierre = alto * 0.78;
-        proximaVelaX = 0;
+      // 1. SERIE PIB (MACRO)
+      const lineaBasePIB = alto * 0.28;
+      const tendenciaPIB = (progresoXLineas / ancho) * -30;
+      const cicloLargo = Math.sin(progresoXLineas * 0.032) * 20;
+      const cicloCorto = Math.cos(progresoXLineas * 0.12) * 6;
+      const ruidoPIB = Math.sin(progresoXLineas * 0.3) * 1.5;
+      const pibYActual = lineaBasePIB + tendenciaPIB + cicloLargo + cicloCorto + ruidoPIB;
+
+      if (puntosPIB.length === 0 || puntosPIB[puntosPIB.length - 1].x < progresoXLineas) {
+        puntosPIB.push({ x: progresoXLineas, y: pibYActual });
       }
 
+      // 2. PRECIO (ACTIVO)
+      const cambioAleatorio = (Math.random() - 0.495) * 4.5;
+      valorActualActivo = Math.max(alto * 0.38, Math.min(alto * 0.62, valorActualActivo + cambioAleatorio));
+      puntosActivo.push({ x: progresoXLineas, y: valorActualActivo });
+
+      // 3. VELAS JAPONESAS
+      if (progresoXVelas >= proximaVelaX) {
+        const esAlcista = Math.random() > 0.47;
+        const tamañoCuerpo = Math.random() * 14 + 4;
+        const apertura = ultimoCierre;
+        const cierre = esAlcista ? apertura - tamañoCuerpo : apertura + tamañoCuerpo;
+        const cuerpoMasAlto = Math.min(apertura, cierre);
+        const cuerpoMasBajo = Math.max(apertura, cierre);
+        const maximo = cuerpoMasAlto - (Math.random() * 9 + 1);
+        const minimo = cuerpoMasBajo + (Math.random() * 9 + 1);
+
+        if (cierre > alto * 0.88) ultimoCierre = alto * 0.82;
+        else if (cierre < alto * 0.65) ultimoCierre = alto * 0.72;
+        else ultimoCierre = cierre;
+
+        listaVelas.push({ apertura, maximo, minimo, cierre, posicionX: proximaVelaX });
+        proximaVelaX += espacioTotalVela;
+      }
+
+      // 4. FÓRMULAS: disparo de nuevas (se quedan tal cual, solapamiento es intencional)
       if (tiempo % 140 === 0 && formulasEnPantalla.length < 5) {
         const latexAleatorio = FORMULAS_LATEX[Math.floor(Math.random() * FORMULAS_LATEX.length)];
         generarImagenFormula(latexAleatorio).then(({ img, w, h }) => {
@@ -138,23 +172,27 @@ export default function HeroQuantitativeLab() {
             y: alto * 0.15 + Math.random() * (alto * 0.55),
             velocidad: 0.15 + Math.random() * 0.2,
             anchoImg: w,
-            altoImg: h
+            altoImg: h,
           });
         });
       }
 
-      // 1. SERIE PIB (MACRO) con perspectiva
-      const lineaBasePIB = alto * 0.28;
-      const tendenciaPIB = (progresoXLineas / ancho) * -30;
-      const cicloLargo = Math.sin(progresoXLineas * 0.015) * 20;
-      const cicloCorto = Math.cos(progresoXLineas * 0.05) * 6;
-      const ruidoPIB = Math.sin(progresoXLineas * 0.3) * 1.5;
-      const pibYActual = lineaBasePIB + tendenciaPIB + cicloLargo + cicloCorto + ruidoPIB;
-
-      if (puntosPIB.length === 0 || puntosPIB[puntosPIB.length - 1].x < progresoXLineas) {
-        puntosPIB.push({ x: progresoXLineas, y: pibYActual });
+      // 5. FÓRMULAS: movimiento y limpieza de las que ya salieron
+      for (let i = formulasEnPantalla.length - 1; i >= 0; i--) {
+        const f = formulasEnPantalla[i];
+        f.x += f.velocidad;
+        if (f.x > ancho + 100) formulasEnPantalla.splice(i, 1);
       }
 
+      return progresoXLineas;
+    };
+
+    // --- DIBUJAR FRAME (solo lectura del estado, no lo modifica) ---
+    const dibujarFrame = () => {
+      ctx.fillStyle = COLORES.fondo;
+      ctx.fillRect(0, 0, ancho, alto);
+
+      // Serie PIB
       ctx.beginPath();
       for (let i = 0; i < puntosPIB.length; i++) {
         const { px, py, escala } = proyectar(puntosPIB[i].x, puntosPIB[i].y, ancho, alto);
@@ -165,13 +203,7 @@ export default function HeroQuantitativeLab() {
       ctx.strokeStyle = COLORES.pib;
       ctx.stroke();
 
-      // 2. PRECIO (ACTIVO) y ACTUALIZACIÓN
-      if (tiempo % 1 === 0) {
-        const cambioAleatorio = (Math.random() - 0.495) * 4.5;
-        valorActualActivo = Math.max(alto * 0.38, Math.min(alto * 0.62, valorActualActivo + cambioAleatorio));
-        puntosActivo.push({ x: progresoXLineas, y: valorActualActivo });
-      }
-
+      // Serie precio (activo)
       ctx.beginPath();
       for (let i = 0; i < puntosActivo.length; i++) {
         const { px, py, escala } = proyectar(puntosActivo[i].x, puntosActivo[i].y, ancho, alto);
@@ -182,13 +214,13 @@ export default function HeroQuantitativeLab() {
       ctx.strokeStyle = COLORES.signal;
       ctx.stroke();
 
-      // 3. EJE DE COORDENADAS (CRUZ) - Solo la punta viva
+      // Cruz (eje de la punta viva)
       if (puntosActivo.length > 0) {
         const ultimoPunto = puntosActivo[puntosActivo.length - 1];
         const { px, py } = proyectar(ultimoPunto.x, ultimoPunto.y, ancho, alto);
         ctx.beginPath();
         ctx.strokeStyle = 'rgba(20, 23, 28, 0.04)';
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2;
         ctx.moveTo(px, 0);
         ctx.lineTo(px, alto);
         ctx.moveTo(0, py);
@@ -196,13 +228,26 @@ export default function HeroQuantitativeLab() {
         ctx.stroke();
       }
 
-      // 4. SEÑALES DE COMPRA/VENTA (triángulos) con escala
-      // Antes se ocultaban hasta ancho*0.38 para no chocar con el texto superpuesto.
-      // Ahora el canvas vive en su propia columna (ya no hay texto encima), así
-      // que pueden aparecer desde el borde izquierdo del gráfico.
+      // --- LÍNEA BASE + TICKS (punto 2: ancla visual, "el dato real es el diseño") ---
+      // Solo hairlines, sin fechas ni cifras inventadas — sería un dato falso.
+      const yBase = alto * 0.94;
+      ctx.strokeStyle = COLORES.line;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(ancho * (UMBRAL_INICIO_DATOS - 0.04), yBase);
+      ctx.lineTo(ancho, yBase);
+      ctx.stroke();
+      for (let x = ancho * (UMBRAL_INICIO_DATOS - 0.04); x < ancho; x += 110) {
+        ctx.beginPath();
+        ctx.moveTo(x, yBase);
+        ctx.lineTo(x, yBase - 6);
+        ctx.stroke();
+      }
+
+      // Señales de compra/venta
       for (let i = 10; i < puntosActivo.length; i += 75) {
         const p = puntosActivo[i];
-        if (p.x < ancho - 40) {
+        if (p.x > ancho * UMBRAL_INICIO_DATOS && p.x < ancho - 40) {
           const { px, py, escala } = proyectar(p.x, p.y, ancho, alto);
           const esCompra = Math.sin(p.x) > 0;
           const tamaño = 6 * escala;
@@ -222,41 +267,26 @@ export default function HeroQuantitativeLab() {
         }
       }
 
-      // 5. FÓRMULAS KATEX con perspectiva y escalado
-      for (let i = formulasEnPantalla.length - 1; i >= 0; i--) {
+      // Fórmulas KaTeX
+      for (let i = 0; i < formulasEnPantalla.length; i++) {
         const f = formulasEnPantalla[i];
-        f.x += f.velocidad;
-        if (f.x > ancho + 100) { formulasEnPantalla.splice(i, 1); continue; }
-
         const { px, py, escala } = proyectar(f.x, f.y, ancho, alto);
         const anchoEscalado = f.anchoImg * escala;
         const altoEscalado = f.altoImg * escala;
         ctx.drawImage(f.img, px - anchoEscalado / 2, py - altoEscalado / 2, anchoEscalado, altoEscalado);
       }
 
-      // 6. VELAS JAPONESAS (con perspectiva)
-      // Igual que en el punto 4: ya no se recorta el tramo izquierdo,
-      // las velas nacen justo en el borde izquierdo del gráfico.
-      if (progresoXVelas >= proximaVelaX) {
-        const esAlcista = Math.random() > 0.47;
-        const tamañoCuerpo = Math.random() * 14 + 4;
-        const apertura = ultimoCierre;
-        const cierre = esAlcista ? apertura - tamañoCuerpo : apertura + tamañoCuerpo;
-        const cuerpoMasAlto = Math.min(apertura, cierre);
-        const cuerpoMasBajo = Math.max(apertura, cierre);
-        const maximo = cuerpoMasAlto - (Math.random() * 9 + 1);
-        const minimo = cuerpoMasBajo + (Math.random() * 9 + 1);
+      // Máscara de degradado (tapa la izquierda, donde va el texto)
+      const degradado = ctx.createLinearGradient(0, 0, ancho, 0);
+      degradado.addColorStop(0, COLORES.fondo);
+      degradado.addColorStop(UMBRAL_INICIO_DATOS - 0.05, COLORES.fondo);
+      degradado.addColorStop(UMBRAL_INICIO_DATOS + 0.05, 'rgba(250, 250, 247, 0.25)');
+      ctx.fillStyle = degradado;
+      ctx.fillRect(0, 0, ancho, alto);
 
-        if (cierre > alto * 0.88) ultimoCierre = alto * 0.82;
-        else if (cierre < alto * 0.65) ultimoCierre = alto * 0.72;
-        else ultimoCierre = cierre;
-
-        listaVelas.push({ apertura, maximo, minimo, cierre, posicionX: proximaVelaX });
-        proximaVelaX += espacioTotalVela;
-      }
-
+      // Velas japonesas (por encima de la máscara)
       listaVelas.forEach((vela) => {
-        if (vela.posicionX > ancho - 40) return;
+        if (vela.posicionX < ancho * UMBRAL_INICIO_DATOS || vela.posicionX > ancho - 40) return;
 
         const { px, py, escala } = proyectar(vela.posicionX, (vela.apertura + vela.cierre) / 2, ancho, alto);
         const esVelaVerde = vela.cierre < vela.apertura;
@@ -266,11 +296,10 @@ export default function HeroQuantitativeLab() {
         const altoMaximoEscalado = (vela.maximo - vela.minimo) * escala;
 
         const centroY = py;
-        const cuerpoSuperior = centroY - (altoCuerpoEscalado / 2);
-        const mechaSuperior = centroY - (altoMaximoEscalado / 2);
-        const mechaInferior = centroY + (altoMaximoEscalado / 2);
+        const cuerpoSuperior = centroY - altoCuerpoEscalado / 2;
+        const mechaSuperior = centroY - altoMaximoEscalado / 2;
+        const mechaInferior = centroY + altoMaximoEscalado / 2;
 
-        // Mechas
         ctx.beginPath();
         ctx.strokeStyle = 'rgba(20, 23, 28, 0.55)';
         ctx.lineWidth = 1.5 * escala;
@@ -278,30 +307,48 @@ export default function HeroQuantitativeLab() {
         ctx.lineTo(px, mechaInferior);
         ctx.stroke();
 
-        // Cuerpo
         ctx.fillStyle = esVelaVerde ? COLORES.velaAlcista : COLORES.velaBajista;
         ctx.strokeStyle = 'rgba(20, 23, 28, 0.5)';
         ctx.lineWidth = 0.75 * escala;
 
-        const xVela = px - (anchoVelaEscalado / 2);
+        const xVela = px - anchoVelaEscalado / 2;
         ctx.fillRect(xVela, cuerpoSuperior, anchoVelaEscalado, altoCuerpoEscalado);
         ctx.strokeRect(xVela, cuerpoSuperior, anchoVelaEscalado, altoCuerpoEscalado);
       });
+    };
 
-      // 7. DIFUMINADO DEL BORDE DERECHO (nuevo, pedido esta sesión)
-      // En vez de que las velas/líneas terminen en un corte seco contra el
-      // borde derecho del gráfico, los últimos px se funden con el color
-      // de fondo — efecto "se pierde en el horizonte" en vez de pared.
-      const anchoDifuminado = ancho * 0.12; // ~12% final del gráfico
-      const inicioDifuminado = ancho - anchoDifuminado;
-      const degradadoDerecha = ctx.createLinearGradient(inicioDifuminado, 0, ancho, 0);
-      degradadoDerecha.addColorStop(0, 'rgba(250, 250, 247, 0)'); // transparente
-      degradadoDerecha.addColorStop(1, COLORES.fondo);            // opaco, color de fondo
-      ctx.fillStyle = degradadoDerecha;
-      ctx.fillRect(inicioDifuminado, 0, anchoDifuminado, alto);
+    // --- BUCLE PRINCIPAL ---
+    const renderizar = () => {
+      const progresoXLineas = avanzarEstado();
 
+      if (progresoXLineas < 1.5) {
+        puntosPIB.length = 0;
+        puntosActivo.length = 0;
+        listaVelas.length = 0;
+        formulasEnPantalla.length = 0;
+        valorActualActivo = alto * 0.45;
+        ultimoCierre = alto * 0.78;
+        proximaVelaX = 0;
+
+        // Punto 3: en vez de dejar que se vea vacío mientras se rellena en
+        // tiempo real (~18s), adelantamos la simulación de golpe (síncrono,
+        // no dibuja nada) para que el próximo frame pintado ya salga completo.
+        const framesNecesarios = Math.ceil(ancho / 1.1);
+        for (let i = 0; i < framesNecesarios; i++) {
+          avanzarEstado();
+        }
+      }
+
+      dibujarFrame();
       idAnimacion = requestAnimationFrame(renderizar);
     };
+
+    // Relleno inicial: mismo mecanismo, para que el primerísimo render
+    // (antes incluso del primer frame) ya no arranque vacío.
+    const framesNecesariosInicial = Math.ceil(ancho / 1.1);
+    for (let i = 0; i < framesNecesariosInicial; i++) {
+      avanzarEstado();
+    }
 
     renderizar();
 
@@ -312,12 +359,12 @@ export default function HeroQuantitativeLab() {
   }, []);
 
   return (
-    // Altura: placeholder 400px, pendiente de tu valor definitivo.
-    <div className="relative w-full h-[400px] bg-white overflow-hidden border-b border-line">
-      <div className="relative z-10 max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center gap-7">
+    // TODO: altura de placeholder — pendiente de tu parametrización definitiva.
+    <div className="relative w-full h-[400px] bg-bg overflow-hidden border-b border-line">
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
-        {/* COLUMNA 1: TEXTO (~30%) — ya no flota sobre el canvas, es su propia columna */}
-        <div className="w-full md:w-[30%] text-left space-y-4">
+      <div className="relative z-10 max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center">
+        <div className="w-full md:w-[40%] text-left space-y-4 pointer-events-none select-none">
           <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded bg-signal/10 border border-signal/20 text-[10px] font-mono tracking-wider text-signal">
             <span className="w-1 h-1 rounded-full bg-signal animate-pulse" />
             LABORATORIO I+D+i
@@ -327,23 +374,17 @@ export default function HeroQuantitativeLab() {
             <span className="text-signal">Cuantitativo</span>
           </h1>
           <p className="text-xs font-mono leading-relaxed text-muted">
-            Modelos econométricos, machine learning y trading algorítmico 
+            Modelos econométricos y de machine learning validados <br />
+            con track record real.
           </p>
+          {/* Punto 4: ancla que conecta el bloque de texto con el gráfico —
+              sin cifras de rendimiento (evita rozar lenguaje de recomendación, ver 00-spec-contexto sección 6) */}
           <div className="pt-1 flex items-center gap-2 font-mono text-[10px] tracking-widest text-muted">
             <span className="w-1 h-1 rounded-full bg-signal" />
             TRACK RECORD REAL — DARWINEX
           </div>
         </div>
-
-        {/* COLUMNA 2: ANIMACIÓN (~70%) — el canvas ahora vive solo aquí dentro,
-            no debajo de todo el Hero. En móvil se oculta (mejora de responsive). */}
-        <div className="hidden md:block relative w-[70%] h-[96%] self-center rounded-2xl overflow-hidden">
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
-        <div
-          className="absolute inset-0 pointer-events-none rounded-2xl"
-          style={{ boxShadow: 'inset 0 0 10px 5px #FFFFFF' }}
-        />
-      </div>
+        <div className="hidden md:block md:w-[60%] h-full" />
       </div>
     </div>
   );

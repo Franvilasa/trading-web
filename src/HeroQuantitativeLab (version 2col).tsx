@@ -68,7 +68,7 @@ export default function HeroQuantitativeLab() {
     window.addEventListener('resize', ajustarPantalla);
 
     // --- VARIABLES DE CONTROL (idénticas a la versión original) ---
-    let tiempo = 0;
+    let tiempo = 400;
     const puntosPIB: { x: number; y: number }[] = [];
     const puntosActivo: { x: number; y: number }[] = [];
     let valorActualActivo = alto * 0.45;
@@ -313,8 +313,8 @@ export default function HeroQuantitativeLab() {
 
   return (
     // Altura: placeholder 400px, pendiente de tu valor definitivo.
-    <div className="relative w-full h-[400px] bg-white overflow-hidden border-b border-line">
-      <div className="relative z-10 max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center gap-7">
+    <div className="relative w-full h-[400px] bg-bg overflow-hidden border-b border-line">
+      <div className="relative z-10 max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center gap-8">
 
         {/* COLUMNA 1: TEXTO (~30%) — ya no flota sobre el canvas, es su propia columna */}
         <div className="w-full md:w-[30%] text-left space-y-4">
@@ -327,23 +327,17 @@ export default function HeroQuantitativeLab() {
             <span className="text-signal">Cuantitativo</span>
           </h1>
           <p className="text-xs font-mono leading-relaxed text-muted">
-            Modelos econométricos, machine learning y trading algorítmico 
+            Modelos econométricos y de machine learning validados <br />
+            con track record real.
           </p>
-          <div className="pt-1 flex items-center gap-2 font-mono text-[10px] tracking-widest text-muted">
-            <span className="w-1 h-1 rounded-full bg-signal" />
-            TRACK RECORD REAL — DARWINEX
-          </div>
         </div>
 
         {/* COLUMNA 2: ANIMACIÓN (~70%) — el canvas ahora vive solo aquí dentro,
             no debajo de todo el Hero. En móvil se oculta (mejora de responsive). */}
-        <div className="hidden md:block relative w-[70%] h-[96%] self-center rounded-2xl overflow-hidden">
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
-        <div
-          className="absolute inset-0 pointer-events-none rounded-2xl"
-          style={{ boxShadow: 'inset 0 0 10px 5px #FFFFFF' }}
-        />
-      </div>
+        <div className="hidden md:block relative w-[70%] h-full overflow-hidden">
+          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
+        </div>
+
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ export default function PropuestaValor() {
   return (
     <section className="border-b border-[#E3E1DC] bg-[#FAFAF7]">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-20">
-        <div className="max-w-2xl space-y-4">
+        <div className="space-y-4 text-justify">
           {PROPUESTA_VALOR.frases.map((frase, i) => (
             <p
               key={i}
@@ -19,12 +19,12 @@ export default function PropuestaValor() {
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-4 mt-8">
+        <div className="flex flex-wrap gap-4 mt-8 justify-center">
           {PROPUESTA_VALOR.botones.map((boton) => (
             <a
               key={boton.href}
               href={boton.href}
-              className="inline-flex items-center px-5 py-2.5 rounded border border-[#2D5D6B] text-[#2D5D6B] text-sm font-medium font-mono tracking-tight hover:bg-[#2D5D6B] hover:text-[#FAFAF7] transition-colors"
+              className="inline-flex items-center px-5 py-2.5 rounded border border-[#2D5D6B] text-[#2D5D6B] text-sm font-medium font-mono tracking-tight hover:bg-[#2D5D6B] hover:text-[#FAFAF7] hover:shadow-[0_0_14px_rgba(45,93,107,0.45)] transition-all"
             >
               {boton.label}
             </a>
