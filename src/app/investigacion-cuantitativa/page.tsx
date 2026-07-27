@@ -119,12 +119,12 @@ const categorias: Categoria[] = [
 
 export default function PaginaInvestigacionCuantitativa() {
   return (
-    <main className="max-w-[1200px] mx-auto px-6 py-16 flex flex-col gap-12">
+    <main className="max-w-[1200px] mx-auto px-6 py-12 flex flex-col gap-12">
       <header className="max-w-[700px]">
-        <h1 className="font-[Fraunces] text-[var(--ink)] text-4xl mb-4">
+        <h1 className="font-sans font-bold tracking-tight text-ink text-4xl mb-4">
           Investigación Cuantitativa
         </h1>
-        <p className="font-[Inter] text-[var(--muted)] text-lg">
+        <p className="font-sans text-muted text-lg">
           Proceso de mejora continua permanente: desarrollo científico
           aplicado, desde modelos econométricos hasta teoría de juegos.
         </p>
@@ -141,7 +141,7 @@ export default function PaginaInvestigacionCuantitativa() {
             <section
               key={categoria.titulo}
               id={`cat-${categoria.slug}`}
-              className="bg-[var(--bg)] border border-[var(--line)] rounded-lg py-5 px-30 scroll-mt-24 border-l-4"
+              className="bg-bg border border-line rounded-lg py-5 px-30 scroll-mt-24 border-l-4"
               style={{ borderLeftColor: categoria.color }}
             >
               <div className={`flex flex-col md:flex-row md:items-start gap-1 w-full ${esPar ? '' : 'md:flex-row-reverse'}`}>
@@ -153,19 +153,19 @@ export default function PaginaInvestigacionCuantitativa() {
                     className="w-10 h-10 mb-3 opacity-70"
                   />
                   <h2
-                    className="font-[Fraunces] text-[var(--ink)] text-2xl mb-2 border-b-2 pb-1 inline-block"
+                    className="font-sans font-bold tracking-tight text-ink text-2xl mb-2 border-b-2 pb-1 inline-block"
                     style={{ borderBottomColor: categoria.color }}
                   >
                     {categoria.titulo}
                   </h2>
-                  <p className="font-[Inter] text-sm text-[var(--muted)] mb-3 max-w-[280px]">
+                  <p className="font-sans text-sm text-muted mb-3 max-w-[280px]">
                     {categoria.frase}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {categoria.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="font-[IBM_Plex_Mono] text-[11px] tracking-wide text-[#2D5D6B] border border-[var(--line)] rounded-sm px-2 py-1"
+                        className="font-mono text-[11px] tracking-wide text-[#2D5D6B] border border-line rounded-sm px-2 py-1"
                       >
                         {tag}
                       </span>

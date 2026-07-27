@@ -16,17 +16,17 @@ export default function AlertasOperativasPage() {
   const { hero, sistema, planes, disclaimerPrecios } = ALERTAS_OPERATIVAS;
 
   return (
-    <main className="bg-[var(--bg)] text-[var(--ink)]">
+    <main className="bg-bg text-ink">
       {/* Cabecera */}
       <section className="mx-auto max-w-3xl px-6 py-20 text-center">
-        <p className="text-sm font-medium uppercase tracking-wide text-[var(--signal)]">
+        <p className="text-sm font-medium uppercase tracking-wide text-signal">
           {hero.eyebrow}
         </p>
-        <h1 className="mt-4 font-serif text-3xl leading-tight sm:text-4xl">
+        <h1 className="mt-4 font-sans font-bold tracking-tight text-3xl leading-tight sm:text-4xl">
           {hero.titulo}
         </h1>
-        <p className="mt-6 text-base text-[var(--muted)]">{hero.cuerpo}</p>
-        <p className="mt-6 text-sm text-[var(--muted)]">
+        <p className="mt-6 text-base text-muted">{hero.cuerpo}</p>
+        <p className="mt-6 text-sm text-muted">
           {hero.notaSeparacionLegal}
         </p>
       </section>
@@ -51,10 +51,10 @@ export default function AlertasOperativasPage() {
       <section className="mx-auto max-w-3xl px-6 pb-12">
         <div className="mb-10 text-center">
           <h2 className="text-xl font-medium">{sistema.nombre}</h2>
-          <p className="mt-1 font-mono text-sm text-[var(--muted)]">
+          <p className="mt-1 font-mono text-sm text-muted">
             {sistema.handle}
           </p>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--muted)]">
+          <p className="mx-auto mt-3 max-w-xl text-sm text-muted">
             {sistema.descripcion}
           </p>
         </div>
@@ -83,16 +83,16 @@ export default function AlertasOperativasPage() {
           />
         </div>
 
-        <ul className="mx-auto mt-10 max-w-md space-y-2 text-sm text-[var(--ink)]">
+        <ul className="mx-auto mt-10 max-w-md space-y-2 text-sm text-ink">
           {planes.incluye.map((item) => (
             <li key={item} className="flex gap-2">
-              <span className="text-[var(--signal)]">✓</span>
+              <span className="text-signal">✓</span>
               <span>{item}</span>
             </li>
           ))}
         </ul>
 
-        <p className="mx-auto mt-10 max-w-xl text-center text-xs text-[var(--muted)]">
+        <p className="mx-auto mt-10 max-w-xl text-center text-xs text-muted">
           {disclaimerPrecios}
         </p>
       </section>

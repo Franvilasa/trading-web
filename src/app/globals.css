@@ -34,11 +34,15 @@
   --color-vela-bajista: var(--vela-bajista);
   --color-line: var(--line);
 
-  /* TODO: cuando se añada next/font en layout.tsx (Inter + IBM Plex Mono),
-     estas dos líneas deben apuntar a las variables que genere next/font
-     (ej. var(--font-inter), var(--font-plex-mono)) en vez de al fallback de sistema. */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  /* Fuentes de marca cargadas de verdad vía next/font/google en layout.tsx
+     (var(--font-inter), var(--font-plex-mono)). El fallback de sistema se
+     mantiene como red de seguridad por si el CSS de next/font no llegara
+     a aplicarse a tiempo, pero ya no es la fuente real por defecto.
+     Decisión de esta sesión: no se usa una tercera fuente serif/display
+     (Fraunces) — los títulos usan Inter en negrita en todo el sitio,
+     igual que el Hero y el logo. */
+  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 
 /* Se elimina el modo oscuro automático (prefers-color-scheme) de la plantilla:

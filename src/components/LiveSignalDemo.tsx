@@ -261,10 +261,10 @@ export function LiveSignalDemo() {
   return (
     <div className="mx-auto w-full max-w-[480px]">
       <div
-        className="rounded-lg border border-[var(--line)] bg-[var(--bg)] p-4"
+        className="rounded-lg border border-line bg-bg p-4"
       >
-        <div className="overflow-hidden rounded-lg bg-white" style={{ height: 280 }}>
-          <div className="flex items-center justify-between px-3.5 py-2.5 font-mono text-[11px] text-[var(--muted)]">
+        <div className="overflow-hidden rounded-lg bg-bg" style={{ height: 280 }}>
+          <div className="flex items-center justify-between px-3.5 py-2.5 font-mono text-[11px] text-muted">
             <span className="tracking-wide">EURUSD · simulación</span>
             <span className="flex items-center gap-1.5">
               <span
@@ -279,7 +279,7 @@ export function LiveSignalDemo() {
 
           <div className="flex font-mono text-[11px]">
             <div className="flex-1 px-3.5 py-2">
-              <div className="text-[var(--muted)]">P&amp;L</div>
+              <div className="text-muted">P&amp;L</div>
               <div
                 className="font-medium"
                 style={{ color: pnl.startsWith("-") ? "#D77E22" : "#2D6E7D" }}
@@ -288,19 +288,19 @@ export function LiveSignalDemo() {
               </div>
             </div>
             <div className="flex-1 px-3.5 py-2 text-right">
-              <div className="text-[var(--muted)]">posición</div>
-              <div className="font-medium text-[var(--ink)]">{pos}</div>
+              <div className="text-muted">posición</div>
+              <div className="font-medium text-ink">{pos}</div>
             </div>
           </div>
 
-          <div className="h-[34px] overflow-hidden px-3.5 pb-2.5 font-mono text-[10.5px] leading-snug text-[var(--muted)]">
+          <div className="h-[34px] overflow-hidden px-3.5 pb-2.5 font-mono text-[10.5px] leading-snug text-muted">
             {log.map((line, i) => (
               <div key={i}>{line}</div>
             ))}
           </div>
         </div>
       </div>
-      <p className="mt-3 text-center text-xs text-[var(--muted)]">
+      <p className="mt-3 text-center text-xs text-muted">
         {demoEnVivo.disclaimer}
       </p>
     </div>

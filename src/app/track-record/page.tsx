@@ -20,7 +20,7 @@ export const metadata = {
 export default function PaginaTrackRecord() {
   return (
     <main className="max-w-[900px] mx-auto px-6 py-16 flex flex-col gap-8">
-      <h1 className="font-[Fraunces] text-ink text-4xl">
+      <h1 className="font-sans font-bold tracking-tight text-ink text-4xl">
         Track Record
       </h1>
 
