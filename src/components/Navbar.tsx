@@ -8,6 +8,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { MARCA } from "@/lib/constants/marca";
 
 const enlaces = [
@@ -15,12 +16,25 @@ const enlaces = [
   { texto: "Track Record", ruta: "/track-record" },
   { texto: "Investigación Cuantitativa", ruta: "/investigacion-cuantitativa" },
   { texto: "Alertas Operativas", ruta: "/alertas-operativas" },
+  { texto: "Blog", ruta: "/blog" },
 ];
 
 export default function Navbar() {
   // isOpen = "¿está el menú desplegado?"
   // setIsOpen = la función para cambiarlo
   const [isOpen, setIsOpen] = useState(false);
+
+  // pathname = la ruta actual del navegador (ej. "/blog/prueba").
+  // La usamos para saber si estamos dentro del blog.
+  const pathname = usePathname();
+
+  // En las páginas de un post individual (/blog/algo) no mostramos este
+  // navbar: el banner de marca de PlantillaPost.tsx ya cumple ese rol ahí.
+  // El feed (/blog a secas) SÍ lo muestra — no tiene banner, no hay
+  // redundancia.
+  if (pathname?.startsWith("/blog/")) {
+    return null;
+  }
 
   return (
     <header className="border-b border-line bg-bg sticky top-0 z-50">
