@@ -12,11 +12,16 @@
 
 import type { Post } from "@/lib/types/blog";
 import { post_2026_07_27_prueba_lorem_ipsum } from "./2026-07-27-prueba-lorem-ipsum";
+import { post_2026_07_29_10_Country_and_industry_convergence_of_equity } from "./2026-07-29_10_Country_and_industry_convergence_of_equity";
 
 // Un post, pero con su slug ya calculado y adjunto.
 export type PostConSlug = Post & { slug: string };
 
 export const posts: PostConSlug[] = [
+  {
+    ...post_2026_07_29_10_Country_and_industry_convergence_of_equity,
+    slug: "2026-07-29_10_Country_and_industry_convergence_of_equity",
+  },
   {
     ...post_2026_07_27_prueba_lorem_ipsum,
     slug: "2026-07-27-prueba-lorem-ipsum",

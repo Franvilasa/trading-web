@@ -51,6 +51,7 @@ tsconfig.json
 .next\dev\types\routes.d.ts
 .next\dev\types\validator.ts
 public\alertas-operativas
+public\imagenes-blog
 public\investigacion
 public\marca
 public\file.svg
@@ -58,7 +59,10 @@ public\globe.svg
 public\next.svg
 public\vercel.svg
 public\window.svg
-public\alertas-operativas\ejemplo-mensaje.PNG
+public\alertas-operativas\ejemplo-mensaje.png
+public\imagenes-blog\2026-07-29_10_Country_and_industry_convergence_of_equity.png
+public\imagenes-blog\banner-goldea.png
+public\imagenes-blog\prueba-1.png
 public\investigacion\iconos
 public\investigacion\analisis comparativos PIB.png
 public\investigacion\analisis de clubes de convergencia.png
@@ -123,6 +127,7 @@ src\HeroQuantitativeLab.tsx (version2)
 src\pantallazo hero version 2.PNG
 src\pantallazo hero version original.PNG
 src\app\alertas-operativas
+src\app\blog
 src\app\contacto
 src\app\investigacion-cuantitativa
 src\app\legal
@@ -134,10 +139,13 @@ src\app\icon1.png
 src\app\layout.tsx
 src\app\page.tsx
 src\app\alertas-operativas\page.tsx
+src\app\blog\[slug]
+src\app\blog\page.tsx
 src\app\contacto\page.tsx
 src\app\investigacion-cuantitativa\page.tsx
 src\app\legal\page.tsx
 src\app\track-record\page.tsx
+src\components\blog
 src\components\BloqueContenido.tsx
 src\components\CarruselCategoria.tsx
 src\components\ContactoForm.tsx
@@ -150,10 +158,16 @@ src\components\MessageExample.tsx
 src\components\Navbar.tsx
 src\components\PricingCard.tsx
 src\components\PropuestaValor.tsx
+src\components\blog\CarruselBlog.tsx
+src\components\blog\PlantillaPost.tsx
+src\components\blog\PostCard.tsx
 src\lib\constants
+src\lib\types
+src\lib\constants\blog
 src\lib\constants\alertasOperativas.ts
 src\lib\constants\contacto.ts
 src\lib\constants\home.ts
 src\lib\constants\legal.ts
 src\lib\constants\marca.ts
 src\lib\constants\trackRecord.ts
+src\lib\types\blog.ts

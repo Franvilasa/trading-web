@@ -59,18 +59,28 @@ export default function PlantillaPost({ post }: Props) {
           <p className="font-mono text-sm text-bg/60">{post.fecha}</p>
         </header>
 
-        {/* Imagen propia del post: el recorte de portada + logo que ya
-            genera el agente (herramientas/composicion.py). Se enmarca en
-            un recuadro con difuminado inferior y una nota de origen, para
-            que quede claro de un vistazo que es material del paper y no
-            una imagen decorativa. */}
-        <div className="mb-2 relative rounded overflow-hidden border border-line">
-          <img src={post.imagen} alt={post.titulo} className="w-full h-auto" />
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink/40 to-transparent" />
-        </div>
-        <p className="font-mono text-xs text-muted mb-8">
-          Portada del paper de origen
-        </p>
+        {/* Imagen propia del post: el recorte de portada + logo que genera
+            el agente (herramientas/composicion.py) cuando el origen es un
+            paper. Cuando el origen es la lista manual de temas, no hay
+            imagen — 'imagen' es opcional en type Post — y se muestra un
+            fallback sobrio en vez de romper el layout o dejar un hueco. */}
+        {post.imagen ? (
+          <>
+            <div className="mb-2 relative rounded overflow-hidden border border-line">
+              <img src={post.imagen} alt={post.titulo} className="w-full h-auto" />
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink/40 to-transparent" />
+            </div>
+            <p className="font-mono text-xs text-muted mb-8">
+              Portada del paper de origen
+            </p>
+          </>
+        ) : (
+          <div className="mb-8 rounded border border-line border-dashed py-10 flex items-center justify-center">
+            <p className="font-mono text-xs text-muted uppercase tracking-wider">
+              Goldea · Investigación
+            </p>
+          </div>
+        )}
 
         {/* Cuerpo del post, un párrafo por bloque */}
         <div className="space-y-4 leading-relaxed">
