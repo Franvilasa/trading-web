@@ -12,7 +12,6 @@ import { usePathname } from "next/navigation";
 import { MARCA } from "@/lib/constants/marca";
 
 const enlaces = [
-  { texto: "Inicio", ruta: "/" },
   { texto: "Track Record", ruta: "/track-record" },
   { texto: "Investigación Cuantitativa", ruta: "/investigacion-cuantitativa" },
   { texto: "Alertas Operativas", ruta: "/alertas-operativas" },

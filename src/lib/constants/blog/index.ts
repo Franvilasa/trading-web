@@ -12,11 +12,41 @@
 
 import type { Post } from "@/lib/types/blog";
 import { post_2026_07_29_10_Country_and_industry_convergence_of_equity } from "./2026-07-29_10_Country_and_industry_convergence_of_equity";
+import { post_2026_07_29_1_Phillips_Sul_Transition_Modeling_and_Econometric_Convergence_Tests } from "./2026-07-29_1_Phillips-Sul_Transition_Modeling_and_Econometric_Convergence_Tests";
+import { post_2026_07_29_2_A_review_of_Phillips_Sul_approach_based_club_convergence_tests } from "./2026-07-29_2_A_review_of_Phillips-Sul_approach-based_club_convergence_tests";
+import { post_2026_07_29_3_ConvergenceClubs__A_Package_for_Performing_the_Phillips_and_Suls_R_Studio } from "./2026-07-29_3_ConvergenceClubs__A_Package_for_Performing_the_Phillips_and_Suls_R_Studio";
+import { post_2026_07_29_4_Economic_Transition_and_Growth } from "./2026-07-29_4_Economic_Transition_and_Growth";
+import { post_2026_07_29_5_MultipleWelfare_Clubs_across_Countries } from "./2026-07-29_5_MultipleWelfare_Clubs_across_Countries";
+import { post_2026_07_29_6_Analysis_of_club_convergence_for_economies } from "./2026-07-29_6_Analysis_of_club_convergence_for_economies";
 
 // Un post, pero con su slug ya calculado y adjunto.
 export type PostConSlug = Post & { slug: string };
 
 export const posts: PostConSlug[] = [
+  {
+    ...post_2026_07_29_6_Analysis_of_club_convergence_for_economies,
+    slug: "2026-07-29_6_Analysis_of_club_convergence_for_economies",
+  },
+  {
+    ...post_2026_07_29_5_MultipleWelfare_Clubs_across_Countries,
+    slug: "2026-07-29_5_MultipleWelfare_Clubs_across_Countries",
+  },
+  {
+    ...post_2026_07_29_4_Economic_Transition_and_Growth,
+    slug: "2026-07-29_4_Economic_Transition_and_Growth",
+  },
+  {
+    ...post_2026_07_29_3_ConvergenceClubs__A_Package_for_Performing_the_Phillips_and_Suls_R_Studio,
+    slug: "2026-07-29_3_ConvergenceClubs__A_Package_for_Performing_the_Phillips_and_Suls_R_Studio",
+  },
+  {
+    ...post_2026_07_29_2_A_review_of_Phillips_Sul_approach_based_club_convergence_tests,
+    slug: "2026-07-29_2_A_review_of_Phillips-Sul_approach-based_club_convergence_tests",
+  },
+  {
+    ...post_2026_07_29_1_Phillips_Sul_Transition_Modeling_and_Econometric_Convergence_Tests,
+    slug: "2026-07-29_1_Phillips-Sul_Transition_Modeling_and_Econometric_Convergence_Tests",
+  },
   {
     ...post_2026_07_29_10_Country_and_industry_convergence_of_equity,
     slug: "2026-07-29_10_Country_and_industry_convergence_of_equity",

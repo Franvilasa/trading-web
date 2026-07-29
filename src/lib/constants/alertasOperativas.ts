@@ -7,7 +7,7 @@ export const ALERTAS_OPERATIVAS = {
 
   hero: {
     eyebrow: "Avisos en tiempo real",
-    titulo: "Cuándo el sistema abre o cierra una posición, lo sabes en el instante en que ocurre.",
+    titulo: "Cuando el sistema abre o cierra una posición, lo sabes en el instante en que ocurre.",
     cuerpo:
       "FX-Quant Lab es uno de los modelos del laboratorio, operando de forma sistemática. Este canal no muestra precios, volúmenes ni niveles de stop loss o take profit: únicamente el instante en que el sistema actúa. Su único objetivo es educativo e informativo.",
     notaSeparacionLegal:

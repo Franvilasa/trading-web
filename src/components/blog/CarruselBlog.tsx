@@ -1,25 +1,35 @@
-// src/components/blog/CarruselBlog.tsx
-// Fila de las publicaciones más recientes del blog, para el home.
-// Deslizable horizontalmente (scroll con dedo/ratón). Reutiliza PostCard
-// en su variante "vertical" para mantener consistencia visual con el feed.
-// Reemplaza a CarruselCategoria.tsx para este uso — ese componente rota
-// contenido DENTRO de una sola tarjeta, no sirve para mostrar varias
-// tarjetas de posts distintos en fila (ver 04-spec-blog-agente-ia.md).
+"use client";
 
 import PostCard from "./PostCard";
 import { posts } from "@/lib/constants/blog";
 
 export default function CarruselBlog() {
-  // Los 10 más recientes — el índice ya viene ordenado por fecha.
   const recientes = posts.slice(0, 10);
 
-  // Si todavía no hay posts, no mostramos la sección (nada que deslizar).
-  if (recientes.length === 0) {
-    return null;
-  }
+  if (recientes.length === 0) return null;
+
+  const listaDuplicada = [...recientes, ...recientes];
 
   return (
     <section className="max-w-5xl mx-auto px-6 py-12">
+      {/* Inyectamos el estilo de la animación directamente para no tocar tailwind.config */}
+      <style jsx>{`
+        @keyframes cinta {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .animacion-cinta {
+          animation: cinta 30s linear infinite;
+        }
+        .animacion-cinta:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
       <header className="mb-6">
         <p className="font-mono text-xs uppercase tracking-wider text-signal mb-2">
           Blog
@@ -27,13 +37,17 @@ export default function CarruselBlog() {
         <h2 className="text-2xl font-bold text-ink">Últimas publicaciones</h2>
       </header>
 
-      {/* overflow-x-auto = permite deslizar horizontalmente.
-          snap-x snap-mandatory = al soltar el scroll, "engancha" en la
-          siguiente tarjeta en vez de quedar a medias. */}
-      <div className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 -mx-6 px-6">
-        {recientes.map((post) => (
-          <PostCard key={post.slug} post={post} variante="vertical" />
-        ))}
+      {/* Mantenemos tu overflow-x-auto para que el scroll manual SIGA FUNCIONANDO */}
+      <div className="overflow-x-auto pb-4 -mx-6 px-6 no-scrollbar">
+        <div className="flex gap-6 w-max animacion-cinta">
+          {listaDuplicada.map((post, index) => (
+            <PostCard
+              key={`${post.slug}-${index}`}
+              post={post}
+              variante="vertical"
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
