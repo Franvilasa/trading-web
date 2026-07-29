@@ -24,7 +24,7 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
         <p className="text-xs font-mono text--muted">
         
-          [ Próximos módulos del Home: KPIs, carrusel de redes, ABM/Wyckoff ]
+          [ "Todos los modelos son erróneos, pero algunos son útiles." — George E. P. Box ]
         </p>
       </div>
 

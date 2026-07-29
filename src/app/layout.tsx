@@ -25,7 +25,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 // Metadatos de la web: el título que aparece en la pestaña del navegador, etc.
 export const metadata: Metadata = {
-  title: "NombreEmpresa | Trading algorítmico",
+  title: "GOLDEA | Trading algorítmico",
   description: "Portfolio de metodología y track record en trading algorítmico",
 };
 
