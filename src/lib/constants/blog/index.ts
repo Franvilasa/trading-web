@@ -18,11 +18,26 @@ import { post_2026_07_29_3_ConvergenceClubs__A_Package_for_Performing_the_Philli
 import { post_2026_07_29_4_Economic_Transition_and_Growth } from "./2026-07-29_4_Economic_Transition_and_Growth";
 import { post_2026_07_29_5_MultipleWelfare_Clubs_across_Countries } from "./2026-07-29_5_MultipleWelfare_Clubs_across_Countries";
 import { post_2026_07_29_6_Analysis_of_club_convergence_for_economies } from "./2026-07-29_6_Analysis_of_club_convergence_for_economies";
+import { post_2026_07_30_7_Convergence_or_divergence_patterns_in_income_distribution_across_countries } from "./2026-07-30_7_Convergence_or_divergence_patterns_in_income_distribution_across_countries";
+import { post_2026_08_03_8_clubes_desindustrializacion } from "./2026-08-03_8_clubes_desindustrializacion";
+import { post_2026_08_10_9_Per_capita_carbon_dioxide_emissions_across_U_S_states_by_sector_and } from "./2026-08-10_9_Per_capita_carbon_dioxide_emissions_across_U_S_states_by_sector_and";
 
 // Un post, pero con su slug ya calculado y adjunto.
 export type PostConSlug = Post & { slug: string };
 
 export const posts: PostConSlug[] = [
+  {
+    ...post_2026_08_10_9_Per_capita_carbon_dioxide_emissions_across_U_S_states_by_sector_and,
+    slug: "2026-08-10_9_Per_capita_carbon_dioxide_emissions_across_U_S_states_by_sector_and",
+  },
+  {
+    ...post_2026_08_03_8_clubes_desindustrializacion,
+    slug: "2026-08-03_8_clubes_desindustrializacion",
+  },
+  {
+    ...post_2026_07_30_7_Convergence_or_divergence_patterns_in_income_distribution_across_countries,
+    slug: "2026-07-30_7_Convergence_or_divergence_patterns_in_income_distribution_across_countries",
+  },
   {
     ...post_2026_07_29_6_Analysis_of_club_convergence_for_economies,
     slug: "2026-07-29_6_Analysis_of_club_convergence_for_economies",
