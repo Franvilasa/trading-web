@@ -22,11 +22,36 @@ import { post_2026_07_30_7_Convergence_or_divergence_patterns_in_income_distribu
 import { post_2026_08_03_8_clubes_desindustrializacion } from "./2026-08-03_8_clubes_desindustrializacion";
 import { post_2026_08_10_9_Per_capita_carbon_dioxide_emissions_across_U_S_states_by_sector_and } from "./2026-08-10_9_Per_capita_carbon_dioxide_emissions_across_U_S_states_by_sector_and";
 import { post_2026_08_17_Blunt_Instruments_ } from "./2026-08-17_Blunt_Instruments-";
+import { post_2026_08_27_Games_and_economic_behaviour } from "./2026-08-27_Games_and_economic_behaviour";
+import { post_2026_08_27_Government_size_composition_volatility_and_economic_growth } from "./2026-08-27_Government_size_composition_volatility_and_economic_growth";
+import { post_2026_08_27_public_debt_and_economic_growth_is_there_a_causal_effect } from "./2026-08-27_public_debt_and_economic_growth_is_there_a_causal_effect";
+import { post_2026_08_27_Rodman_a_note_on_the_theme_of_too_many_instruments } from "./2026-08-27_Rodman_a_note_on_the_theme_of_too_many_instruments";
+import { post_2026_08_27_economic_growth_in_a_cross_section_of_countries } from "./2026-08-27_economic_growth_in_a_cross_section_of_countries";
 
 // Un post, pero con su slug ya calculado y adjunto.
 export type PostConSlug = Post & { slug: string };
 
 export const posts: PostConSlug[] = [
+  {
+    ...post_2026_08_27_economic_growth_in_a_cross_section_of_countries,
+    slug: "2026-08-27_economic_growth_in_a_cross_section_of_countries",
+  },
+  {
+    ...post_2026_08_27_Rodman_a_note_on_the_theme_of_too_many_instruments,
+    slug: "2026-08-27_Rodman_a_note_on_the_theme_of_too_many_instruments",
+  },
+  {
+    ...post_2026_08_27_public_debt_and_economic_growth_is_there_a_causal_effect,
+    slug: "2026-08-27_public_debt_and_economic_growth_is_there_a_causal_effect",
+  },
+  {
+    ...post_2026_08_27_Government_size_composition_volatility_and_economic_growth,
+    slug: "2026-08-27_Government_size_composition_volatility_and_economic_growth",
+  },
+  {
+    ...post_2026_08_27_Games_and_economic_behaviour,
+    slug: "2026-08-27_Games_and_economic_behaviour",
+  },
   {
     ...post_2026_08_17_Blunt_Instruments_,
     slug: "2026-08-17_Blunt_Instruments-",

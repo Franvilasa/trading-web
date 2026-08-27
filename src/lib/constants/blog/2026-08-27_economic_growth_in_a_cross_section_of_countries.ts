@@ -1,0 +1,16 @@
+// src/lib/constants/blog/2026-08-27_economic_growth_in_a_cross_section_of_countries.ts
+// Post generado automaticamente por el puente agente -> blog
+// (herramientas/puente_blog.py, repo goldea-agente-redes).
+// No editar a mano salvo correccion puntual: la proxima ejecucion del
+// agente no vuelve a tocar este archivo, solo crea archivos nuevos.
+
+import type { Post } from "@/lib/types/blog";
+
+export const post_2026_08_27_economic_growth_in_a_cross_section_of_countries: Post = {
+  titulo: `El sesgo por variable omitida y la hipótesis de convergencia condicional`,
+  subtitulo: `Un país de bajo ingreso solo crece más rápido si su capital humano supera su nivel de riqueza. Barro (1991) demostró que, al controlar por escolarización, la correlación entre PIB inicial y crecimiento pasa de 0.09 a -0.74, revelando la convergencia condicional.`,
+  fecha: "2026-08-27",
+  imagen: "/imagenes-blog/2026-08-27_economic_growth_in_a_cross_section_of_countries.png",
+  hashtags: ["Econometria", "Macroeconomia", "CapitalHumano", "AnalisisDeDatos", "InvestigacionCuantitativa"],
+  cuerpo: `En la investigación cuantitativa y la econometría aplicada, uno de los desafíos metodológicos más críticos es la correcta identificación y corrección del sesgo por variable omitida. Un ejemplo emblemático en el análisis de series y datos de corte transversal se encuentra en la hipótesis de la convergencia condicional dentro de la macroeconomía. La teoría neoclásica postula tradicionalmente que las economías con menor nivel de riqueza o capital inicial deberían experimentar rendimientos marginales decrecientes del capital y, por consiguiente, registrar tasas de crecimiento económico más elevadas para converger progresivamente con las economías avanzadas. Sin embargo, al examinar de forma directa los datos empíricos del crecimiento del PIB per cápita en una muestra representativa de 98 países durante el periodo de 1960 a 1985, la correlación simple entre el nivel inicial de riqueza y el ritmo de crecimiento posterior resulta prácticamente nula, registrando un coeficiente de correlación de apenas 0.09. Esta aparente ausencia de relación lineal pareció desmentir la teoría de rendimientos decrecientes. No obstante, en 1991, el economista Robert J. Barro demostró que esta conclusión empírica era errónea debido a la omisión de un factor determinante: la convergencia económica no opera de forma absoluta, sino condicional al stock inicial de capital humano disponible en la población. Al incorporar variables de control específicas relativas a la escolarización en el modelo de regresión econométrica, la correlación parcial entre el PIB inicial y la tasa de crecimiento posterior se vuelve fuertemente negativa, pasando a un valor de -0.74 y registrando un coeficiente estimado de -0.0075. El hallazgo demuestra que un país de bajos ingresos solo alcanza un crecimiento acelerado si cuenta con un nivel de capital humano superior al sugerido por su ingreso per cápita inicial. Para nuestro laboratorio de I+D+i en Goldea, el trabajo de Barro ilustra con precisión cómo las correlaciones bivariadas simples pueden ocultar dinámicas estructurales complejas si no se controlan adecuadamente las variables explicativas clave en el modelo.`,
+};
